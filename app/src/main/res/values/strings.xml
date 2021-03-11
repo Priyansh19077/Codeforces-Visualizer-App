@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">CodeForces Viewer</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="current_rating">Current Rating</string>
+    <string name="registered">Registered</string>
+    <string name="friend_of">Friend of</string>
+    <string name="contribution">Contribution</string>
+    <string name="organization">Organization</string>
+    <string name="name">Name</string>
+    <string name="max_rank">Best Title</string>
+    <string name="city_country">City, Country</string>
+    <string name="online_indicator">Online Indicator</string>
+    <string name="Newbie">newbie</string>
+    <string name="Pupil">pupil</string>
+    <string name="Specialist">specialist</string>
+    <string name="Expert">expert</string>
+    <string name="CandidateMaster">candidate master</string>
+    <string name="Master">master</string>
+    <string name="InternationalMaster">international master</string>
+    <string name="Grandmaster">grandmaster</string>
+    <string name="InternationalGrandmaster">international grandmaster</string>
+    <string name="LegendaryGrandmaster">legendary grandmaster</string>
+    <string name="codeforces_handle">CodeForces Handle</string>
+    <string name="stalk_profile">Stalk Profile</string>
+
+</resources>

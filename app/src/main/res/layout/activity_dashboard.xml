@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Dashboard">
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/profile_photo_image_view"
+        android:layout_width="@dimen/profile_photo_width"
+        android:layout_height="@dimen/profile_photo_height"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerCrop"
+        app:civ_border_color="@color/black"
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/demo_photo" />
+
+    <ImageView
+        android:id="@+id/online_indicator"
+        android:layout_width="@dimen/online_circle_side"
+        android:layout_height="@dimen/online_circle_side"
+        android:contentDescription="@string/online_indicator"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_photo_image_view"
+        app:layout_constraintEnd_toEndOf="@+id/profile_photo_image_view"
+        app:srcCompat="@drawable/online"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/title_text_view1"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_marginTop="@dimen/smaller_margin_top"
+        android:layout_marginLeft="@dimen/margin_left_questions"
+        android:layout_marginRight="@dimen/margin_left_questions"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_bigger_size"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_photo_image_view"
+        tools:text="Priyansh31dec" />
+
+    <TextView
+        android:id="@+id/title_text_view2"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="@dimen/smaller_margin_top"
+        android:layout_marginLeft="@dimen/margin_left_questions"
+        android:layout_marginRight="@dimen/margin_left_questions"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_bigger_size"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view1"
+        tools:text="Legendary GrandMaster" />
+
+
+<!--    Questions Text Boxes Start-->
+    <TextView
+        android:id="@+id/NameQuestion"
+        style="@style/QuestionTextBox"
+        android:layout_marginTop="@dimen/bigger_margin_top"
+        android:text="@string/name"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view2"
+        app:drawableStartCompat="@drawable/name_icon" />
+
+    <TextView
+        android:id="@+id/CurrentRatingQuestion"
+        style="@style/QuestionTextBox"
+        android:text="@string/current_rating"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NameAnswer"
+        app:drawableStartCompat="@drawable/rating_icon" />
+
+    <TextView
+        android:id="@+id/MaxRankQuestion"
+        style="@style/QuestionTextBox"
+        android:text="@string/max_rank"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/CurrentRatingAnswer"
+        app:drawableStartCompat="@drawable/besttitle_icon" />
+
+    <TextView
+        android:id="@+id/OrganizationQuestion"
+        style="@style/QuestionTextBox"
+        android:text="@string/organization"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MaxRankAnswer"
+        app:drawableStartCompat="@drawable/organization_icon" />
+
+    <TextView
+        android:id="@+id/City_CountryQuestion"
+        style="@style/QuestionTextBox"
+        android:text="@string/city_country"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/OrganizationAnswer"
+        app:drawableStartCompat="@drawable/place_icon" />
+
+    <TextView
+        android:id="@+id/ContributionQuestion"
+        style="@style/QuestionTextBox"
+        android:text="@string/contribution"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/City_CountryAnswer"
+        app:drawableStartCompat="@drawable/contribution_icon" />
+
+    <TextView
+        android:id="@+id/FriendOfQuestion"
+        style="@style/QuestionTextBox"
+        android:text="@string/friend_of"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ContributionAnswer"
+        app:drawableStartCompat="@drawable/friends_icon" />
+
+    <TextView
+        android:id="@+id/RegisteredQuestion"
+        style="@style/QuestionTextBox"
+        android:text="@string/registered"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/FriendOfAnswer"
+        app:drawableStartCompat="@drawable/registered_icon" />
+
+<!--Questions Text Boxes End-->
+<!--Answers Text Boxes Start-->
+    <TextView
+        android:id="@+id/NameAnswer"
+        style="@style/AnswerTextBox"
+        android:layout_marginTop="@dimen/bigger_margin_top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/NameQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/title_text_view2"
+        tools:text="Priyansh Agarwal" />
+
+    <TextView
+        android:id="@+id/CurrentRatingAnswer"
+        style="@style/AnswerTextBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/CurrentRatingQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/NameAnswer"
+        tools:text="1994 (max. 2013)" />
+
+    <TextView
+        android:id="@+id/MaxRankAnswer"
+        style="@style/AnswerTextBox"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/CurrentRatingQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/CurrentRatingAnswer"
+        tools:text="Internation Grand Master" />
+
+    <TextView
+        android:id="@+id/OrganizationAnswer"
+        style="@style/AnswerTextBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/OrganizationQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/MaxRankAnswer"
+        tools:text="IIIT Delhi" />
+
+    <TextView
+        android:id="@+id/City_CountryAnswer"
+        style="@style/AnswerTextBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toEndOf="@id/OrganizationQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/OrganizationAnswer"
+        tools:text="New Delhi, India" />
+
+    <TextView
+        android:id="@+id/ContributionAnswer"
+        style="@style/AnswerTextBox"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ContributionQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/City_CountryAnswer"
+        tools:text="+31" />
+
+    <TextView
+        android:id="@+id/FriendOfAnswer"
+        style="@style/AnswerTextBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/FriendOfQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/ContributionAnswer"
+        tools:text="150 users" />
+
+    <TextView
+        android:id="@+id/RegisteredAnswer"
+        style="@style/AnswerTextBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/RegisteredQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/FriendOfAnswer"
+        tools:text="10 months ago" />
+    <!--Answers Text Boxes End-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

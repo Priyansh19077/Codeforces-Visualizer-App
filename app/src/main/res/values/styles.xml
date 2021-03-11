@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="QuestionTextBox">
+        <item name="android:layout_width">@dimen/question_width</item>
+        <item name="android:textSize">@dimen/text_normal_size</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/margin_left_questions</item>
+        <item name="android:layout_marginTop">@dimen/normal_margin_top</item>
+        <item name="android:drawablePadding">@dimen/padding_icon</item>
+        <item name="android:visibility">invisible</item>
+
+    </style>
+    <style name="AnswerTextBox">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:textSize">@dimen/text_normal_size</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/margin_left_answers</item>
+        <item name="android:layout_marginRight">@dimen/margin_right_answers</item>
+        <item name="android:layout_marginTop">@dimen/normal_margin_top</item>
+    </style>
+</resources>

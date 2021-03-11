@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="occupy_all">0dp</dimen>
+    <dimen name="question_width">140dp</dimen>
+    <dimen name="online_circle_side">35dp</dimen>
+    <dimen name="text_normal_size">16sp</dimen>
+    <dimen name="text_bigger_size">18sp</dimen>
+    <dimen name="padding_icon">10dp</dimen>
+    <dimen name="profile_photo_width">180dp</dimen>
+    <dimen name="profile_photo_height">110dp</dimen>
+    <dimen name="question_answer_margin_top">10dp</dimen>
+    <dimen name="normal_margin_top">6dp</dimen>
+    <dimen name="smaller_margin_top">4dp</dimen>
+    <dimen name="bigger_margin_top">15dp</dimen>
+    <dimen name="margin_left_questions">30dp</dimen>
+    <dimen name="margin_left_answers">40dp</dimen>
+    <dimen name="margin_right_answers">10dp</dimen>
+</resources>
