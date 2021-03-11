@@ -55,6 +55,8 @@ class Dashboard : AppCompatActivity() {
                 val userData = response.body()
                 if (userData != null) {
                     updateUI(userData)
+                    showRanks()
+                    getAllUsersData(handle, userData.result.get(0).country)
                 } else {
                     Toast.makeText(applicationContext, "${response.code()}", Toast.LENGTH_LONG).show()
                 }
@@ -65,6 +67,12 @@ class Dashboard : AppCompatActivity() {
                 Toast.makeText(applicationContext, t.localizedMessage, Toast.LENGTH_LONG).show()
             }
         })
+    }
+    private fun showRanks(){
+        binding.WorldRank.visibility = View.VISIBLE
+        binding.CountryRank.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar2.visibility = View.VISIBLE
     }
     private fun updateUI(userData: UserData){
         val result = userData.result.get(0)
@@ -217,5 +225,57 @@ class Dashboard : AppCompatActivity() {
         override fun onPostExecute(result: Bitmap?) {
             bmImage.setImageBitmap(result)
         }
+    }
+
+    private fun getAllUsersData(handle : String, country : String?){
+        val data : Call<UserData> = FetchData.instance.getAllUsers()
+        Log.d("Dashboard", "Getting All users now")
+        data.enqueue(object : Callback<UserData> {
+            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+                Log.d("Dashboard", "${response.code()}")
+                val allUsers = response.body()
+                if(allUsers != null){
+                    var worldRank : Int = 1
+                    var countryRank : Int = 1
+                    var totalWorld = allUsers.result.size
+                    var totalInCountry = 1
+                    for(result in allUsers.result){
+                        if(result.handle == handle)
+                            break
+                        if(result.country == country)
+                            countryRank++
+                        worldRank++
+                    }
+                    for(result in allUsers.result){
+                        if(result.country == country)
+                        totalInCountry++
+                    }
+                    updateRanks(worldRank, totalWorld, if(country != null) countryRank else -1, totalInCountry)
+                }else{
+                    Log.d("Dashboard", "Received null here!!!")
+                }
+            }
+
+            override fun onFailure(call: Call<UserData>, t: Throwable) {
+                Log.d("DashBoard", "Failure: ${t.localizedMessage}")
+                Log.d("Dashboard", "Error in API call ${t.localizedMessage}")
+            }
+        })
+    }
+    private fun updateRanks(Wr : Int, totalW : Int, Cr : Int, totalC : Int){
+        binding.progressBar.visibility = View.INVISIBLE
+        binding.progressBar2.visibility = View.INVISIBLE
+        if(Wr != -1){
+            binding.WorldRankAnswer.text = "$Wr\n($totalW)"
+        }else{
+            binding.WorldRankAnswer.text = "NA"
+        }
+        if(Cr == -1){
+            binding.CountryRankAnswer.text = "NA"
+        }else{
+            binding.CountryRankAnswer.text = "$Cr\n($totalC)"
+        }
+        binding.WorldRankAnswer.visibility = View.VISIBLE
+        binding.CountryRankAnswer.visibility = View.VISIBLE
     }
 }

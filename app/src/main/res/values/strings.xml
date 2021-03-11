@@ -22,5 +22,7 @@
     <string name="LegendaryGrandmaster">legendary grandmaster</string>
     <string name="codeforces_handle">CodeForces Handle</string>
     <string name="stalk_profile">Stalk Profile</string>
+    <string name="global_rank">Global Rank</string>
+    <string name="country_rank">Country Rank</string>
 
 </resources>
