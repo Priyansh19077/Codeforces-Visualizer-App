@@ -1,5 +1,7 @@
 package com.example.codeforcesviewer
 
+import com.example.codeforcesviewer.UserData.UserContests
+import com.example.codeforcesviewer.UserData.UserPublicData
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -9,10 +11,17 @@ const val url = "https://codeforces.com/api/"
 interface ProfileDataFetch {
 
     @GET("user.info")
-    fun getUserData(@Query("handles")handle : String) : retrofit2.Call<UserData>
+    fun getUserData(
+            @Query("handles")handle : String,
+            @Query("lang")lang : String = "en") : retrofit2.Call<UserPublicData>
 
-    @GET("user.ratedList?activeOnly=false")
-    fun getAllUsers() : retrofit2.Call<UserData>
+    @GET("user.ratedList?activeOnly=false&lang=en")
+    fun getAllUsers() : retrofit2.Call<UserPublicData>
+
+    @GET("user.rating")
+    fun getUserRatedContests(
+            @Query("handle")handle : String,
+            @Query("lang")lang : String = "en") : retrofit2.Call<UserContests>
 }
 
 

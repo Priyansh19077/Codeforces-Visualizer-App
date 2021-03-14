@@ -295,7 +295,21 @@
         app:layout_constraintTop_toBottomOf="@+id/FriendOfAnswer"
         tools:text="10 months ago" />
 
-
     <!--Answers Text Boxes End-->
+    <!--Making Rating Chart    -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/RatingGraph"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@+id/RegisteredAnswer">
+    </com.github.mikephil.charting.charts.LineChart>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

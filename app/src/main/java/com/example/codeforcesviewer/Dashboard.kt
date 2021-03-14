@@ -1,5 +1,6 @@
 package com.example.codeforcesviewer
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
@@ -9,7 +10,15 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.example.codeforcesviewer.UserData.UserContests
+import com.example.codeforcesviewer.UserData.UserPublicData
 import com.example.codeforcesviewer.databinding.ActivityDashboardBinding
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,6 +26,9 @@ import java.io.InputStream
 import java.net.URL
 import java.time.Instant
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.max
+import kotlin.math.min
 
 
 class Dashboard : AppCompatActivity() {
@@ -35,7 +47,7 @@ class Dashboard : AppCompatActivity() {
                 resources.getString(R.string.Master) to R.color.Master,
                 resources.getString(R.string.InternationalMaster) to R.color.InternationalMaster,
                 resources.getString(R.string.Grandmaster) to R.color.GrandMaster,
-                resources.getString(R.string.InternationalGrandmaster) to R.color.InternationGrandmaster,
+                resources.getString(R.string.InternationalGrandmaster) to R.color.InternationalGrandmaster,
                 resources.getString(R.string.LegendaryGrandmaster) to R.color.LegendaryGrandmaster
         )
         val handle : String? = intent.getStringExtra("handle")
@@ -47,9 +59,9 @@ class Dashboard : AppCompatActivity() {
         }
     }
     private fun getData(handle: String){
-        val data : Call<UserData> = FetchData.instance.getUserData(handle)
-        data.enqueue(object : Callback<UserData> {
-            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+        val publicData : Call<UserPublicData> = FetchData.instance.getUserData(handle)
+        publicData.enqueue(object : Callback<UserPublicData> {
+            override fun onResponse(call: Call<UserPublicData>, response: Response<UserPublicData>) {
                 Log.d("Dashboard", "Data Received: ${response.body()}")
                 Log.d("Dashboard", "${response.code()}")
                 val userData = response.body()
@@ -57,12 +69,13 @@ class Dashboard : AppCompatActivity() {
                     updateUI(userData)
                     showRanks()
                     getAllUsersData(handle, userData.result.get(0).country)
+                    updateGraph(handle)
                 } else {
                     Toast.makeText(applicationContext, "${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
 
-            override fun onFailure(call: Call<UserData>, t: Throwable) {
+            override fun onFailure(call: Call<UserPublicData>, t: Throwable) {
                 Log.d("DashBoard", "Failure: ${t.localizedMessage}")
                 Toast.makeText(applicationContext, t.localizedMessage, Toast.LENGTH_LONG).show()
             }
@@ -74,8 +87,8 @@ class Dashboard : AppCompatActivity() {
         binding.progressBar.visibility = View.VISIBLE
         binding.progressBar2.visibility = View.VISIBLE
     }
-    private fun updateUI(userData: UserData){
-        val result = userData.result.get(0)
+    private fun updateUI(userPublicData: UserPublicData){
+        val result = userPublicData.result.get(0)
         updateImage(result.titlePhoto)
         showQuestions()
         updateName(result.firstName, result.lastName)
@@ -85,7 +98,8 @@ class Dashboard : AppCompatActivity() {
         updateContribution(result.contribution)
         updateOrganization(result.organization)
         updateFriends(result.friendOfCount)
-        updateColor(result.rank, result.maxRank)
+        if(result.rank != null && result.maxRank != null)
+            updateColor(result.rank, result.maxRank)
         updateRegisteredOnline(result.registrationTimeSeconds, result.lastOnlineTimeSeconds)
         checkOnline(result.lastOnlineTimeSeconds)
     }
@@ -115,7 +129,7 @@ class Dashboard : AppCompatActivity() {
     private fun updateTitle(handle: String, rank: String?, max_rank: String?){
         binding.titleTextView1.text = handle
         binding.titleTextView2.text = getCapitalized((rank ?: ""))
-        binding.MaxRankAnswer.text = getCapitalized((max_rank ?: ""))
+        binding.MaxRankAnswer.text = getCapitalized((max_rank ?: "NA"))
     }
     private fun updateCityCountry(city: String?, country: String?){
         val cityCountry: String = if(city != null) "$city, ${country ?: "NA"}" else country ?: "NA"
@@ -157,7 +171,7 @@ class Dashboard : AppCompatActivity() {
     private fun updateRegisteredOnline(time1: Long, time2: Long){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val timeNow: Long = Instant.now().toEpochMilli() / 1000
-            val timePrev: Long = time1.toLong()
+            val timePrev: Long = time1
             val seconds = timeNow - timePrev
             val days = seconds / 3600 / 24
             val date = getDaysAgo(days.toInt())
@@ -227,17 +241,17 @@ class Dashboard : AppCompatActivity() {
         }
     }
 
-    private fun getAllUsersData(handle : String, country : String?){
-        val data : Call<UserData> = FetchData.instance.getAllUsers()
+    private fun getAllUsersData(handle : String, country : String){
+        val publicData : Call<UserPublicData> = FetchData.instance.getAllUsers()
         Log.d("Dashboard", "Getting All users now")
-        data.enqueue(object : Callback<UserData> {
-            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+        publicData.enqueue(object : Callback<UserPublicData> {
+            override fun onResponse(call: Call<UserPublicData>, response: Response<UserPublicData>) {
                 Log.d("Dashboard", "${response.code()}")
                 val allUsers = response.body()
                 if(allUsers != null){
-                    var worldRank : Int = 1
-                    var countryRank : Int = 1
-                    var totalWorld = allUsers.result.size
+                    var worldRank = 1
+                    var countryRank = 1
+                    val totalWorld = allUsers.result.size
                     var totalInCountry = 1
                     for(result in allUsers.result){
                         if(result.handle == handle)
@@ -245,6 +259,9 @@ class Dashboard : AppCompatActivity() {
                         if(result.country == country)
                             countryRank++
                         worldRank++
+                    }
+                    if(worldRank > allUsers.result.size){
+                        worldRank = -1
                     }
                     for(result in allUsers.result){
                         if(result.country == country)
@@ -256,7 +273,7 @@ class Dashboard : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<UserData>, t: Throwable) {
+            override fun onFailure(call: Call<UserPublicData>, t: Throwable) {
                 Log.d("DashBoard", "Failure: ${t.localizedMessage}")
                 Log.d("Dashboard", "Error in API call ${t.localizedMessage}")
             }
@@ -277,5 +294,84 @@ class Dashboard : AppCompatActivity() {
         }
         binding.WorldRankAnswer.visibility = View.VISIBLE
         binding.CountryRankAnswer.visibility = View.VISIBLE
+    }
+    private fun updateGraph(handle : String){
+        val ratings = ArrayList<Entry>()
+        val circleColors = ArrayList<Int>()
+        val contestData : Call<UserContests> = FetchData.instance.getUserRatedContests(handle)
+        contestData.enqueue(object : Callback<UserContests> {
+            override fun onResponse(call: Call<UserContests>, response: Response<UserContests>) {
+                Log.d("Dashboard", "Contest Data ${response.code()}")
+                val dataRetured = response.body()
+                if(dataRetured != null){
+                    var max_here = -2000000
+                    var min_here = 2000000
+                    var max_limit : Long = 0
+                    val min_time = if (dataRetured.result.isNotEmpty()) dataRetured.result[0].ratingUpdateTimeSeconds else 0
+                    for(contest in dataRetured.result){
+                        Log.d("Dashboard", "Contest Next ${contest.toString()}")
+                        max_here = max(max_here, contest.newRating)
+                        min_here = min(min_here, contest.newRating)
+                        Log.d("Dashboard", "Adding point ${contest.newRating} ${(contest.ratingUpdateTimeSeconds - min_time).toFloat() / 1000}")
+                        ratings.add(Entry( (contest.ratingUpdateTimeSeconds - min_time).toFloat() / 1000, contest.newRating.toFloat()))
+                    }
+                    var count = 0
+                    for(entry in ratings){
+                        if(entry.y != max_here.toFloat() || count == 1){
+                            circleColors.add(resources.getColor(R.color.ratingGraph))
+                        }else{
+                            circleColors.add(resources.getColor(R.color.maxRating))
+                            count = 1
+                        }
+                    }
+                    max_here = if(max_here != -2000000) max_here + 200 else 2000
+                    min_here = if(min_here != 2000000) min(min_here - 200, 1200) else 1200
+                    val dataSets = ArrayList<ILineDataSet>()
+                    ratings.sortBy { it.x }
+                    val lineDataSet = LineDataSet(ratings, handle)
+                    lineDataSet.lineWidth = 2F
+                    lineDataSet.setColor(resources.getColor(R.color.ratingGraph))
+                    lineDataSet.setCircleColors(circleColors)
+                    lineDataSet.setDrawValues(false)
+                    dataSets.add(lineDataSet)
+                    styleChart(max_here, min_here)
+                    binding.RatingGraph.data = LineData(dataSets)
+                    binding.RatingGraph.invalidate()
+                }else{
+                    Log.d("Dashboard", "Contest Data Received null here!!!")
+                }
+            }
+
+            override fun onFailure(call: Call<UserContests>, t: Throwable) {
+                Log.d("DashBoard", "Failure: ${t.localizedMessage}")
+                Log.d("Dashboard", "Error in API call ${t.localizedMessage}")
+            }
+        })
+
+    }
+    private fun styleChart(max_here : Int, min_here : Int){
+        Log.d("Dashboard", "$max_here $min_here YAxis constraints")
+        binding.RatingGraph.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        binding.RatingGraph.axisLeft.setAxisMaxValue(max_here.toFloat())
+        binding.RatingGraph.axisLeft.setAxisMinValue(min_here.toFloat())
+        binding.RatingGraph.axisRight.setDrawLabels(false)
+        binding.RatingGraph.description.isEnabled = false
+        binding.RatingGraph.animateX(3000)
+        binding.RatingGraph.axisRight.setDrawGridLines(false)
+        binding.RatingGraph.setDrawBorders(true)
+        binding.RatingGraph.xAxis.setDrawLabels(false)
+        binding.RatingGraph.setBorderWidth(2f)
+        binding.RatingGraph.visibility = View.VISIBLE
+        binding.RatingGraph.legend.isEnabled = false
+        val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {ContextCompat.getColor(applicationContext, R.color.white)}
+            Configuration.UI_MODE_NIGHT_NO -> {ContextCompat.getColor(applicationContext, R.color.black)}
+            else -> {ContextCompat.getColor(applicationContext, R.color.black)}
+        }
+        binding.RatingGraph.axisLeft.textColor = color
+        binding.RatingGraph.setPinchZoom(false)
+        binding.RatingGraph.setScaleEnabled(false)
+        binding.RatingGraph.isHighlightPerTapEnabled = false
+        binding.RatingGraph.isHighlightPerDragEnabled = false
     }
 }

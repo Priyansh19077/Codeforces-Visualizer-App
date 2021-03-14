@@ -13,11 +13,14 @@
     <color name="Pupil">#DC04D307</color>
     <color name="Specialist">#0CE6B5</color>
     <color name="Expert">#0323F3</color>
-    <color name="CandidateMaster">#FF09FC</color>
-    <color name="Master">#BFAB08</color>
+    <color name="CandidateMaster">#A1049F</color>
+    <color name="Master">#D6A906</color>
     <color name="InternationalMaster">#BC7000</color>
     <color name="GrandMaster">#DD3F3F</color>
-    <color name="InternationGrandmaster">#F81A1A</color>
+    <color name="InternationalGrandmaster">#F81A1A</color>
     <color name="LegendaryGrandmaster">#C10303</color>
+
+    <color name="ratingGraph">#FFD041</color>
+    <color name="maxRating">#FF0000</color>
     
 </resources>
