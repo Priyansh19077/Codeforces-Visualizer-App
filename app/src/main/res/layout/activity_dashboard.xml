@@ -26,7 +26,9 @@
             android:layout_width="match_parent"
             android:layout_margin="5dp"
             android:elevation="-10dp"
+            android:visibility="invisible"
             android:focusable="false"
+            app:strokeWidth="1dp"
             android:clickable="false"
             app:cardCornerRadius="10dp">
             <include
@@ -36,6 +38,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/UserGraph"
+            android:visibility="invisible"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:layout_margin="5dp"

@@ -105,6 +105,7 @@ class Dashboard : AppCompatActivity() {
         checkOnline(result.lastOnlineTimeSeconds)
     }
     private fun showQuestions(){
+        binding.PublicData.visibility = View.VISIBLE
         binding.publicDataId.NameQuestion.visibility = View.VISIBLE
         binding.publicDataId.CurrentRatingQuestion.visibility = View.VISIBLE
         binding.publicDataId.OrganizationQuestion.visibility = View.VISIBLE
@@ -367,7 +368,8 @@ class Dashboard : AppCompatActivity() {
         binding.userGraphId.RatingGraph.axisRight.setDrawGridLines(false)
         binding.userGraphId.RatingGraph.setDrawBorders(true)
         binding.userGraphId.RatingGraph.xAxis.setDrawLabels(false)
-        binding.userGraphId.RatingGraph.setBorderWidth(2f)
+        binding.userGraphId.RatingGraph.setBorderWidth(1.5f)
+        binding.UserGraph.visibility = View.VISIBLE
         binding.userGraphId.RatingGraph.visibility = View.VISIBLE
         binding.userGraphId.RatingGraph.legend.isEnabled = false
         val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
