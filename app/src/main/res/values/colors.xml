@@ -22,5 +22,8 @@
 
     <color name="ratingGraph">#FFD041</color>
     <color name="maxRating">#FF0000</color>
-    
+
+    <color name="grey">#9F9494</color>
+    <color name="darkGrey">#3C3333</color>
+
 </resources>

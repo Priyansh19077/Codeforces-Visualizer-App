@@ -83,10 +83,10 @@ class Dashboard : AppCompatActivity() {
         })
     }
     private fun showRanks(){
-        binding.WorldRank.visibility = View.VISIBLE
-        binding.CountryRank.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.VISIBLE
-        binding.progressBar2.visibility = View.VISIBLE
+        binding.publicDataId.WorldRank.visibility = View.VISIBLE
+        binding.publicDataId.CountryRank.visibility = View.VISIBLE
+        binding.publicDataId.progressBar.visibility = View.VISIBLE
+        binding.publicDataId.progressBar2.visibility = View.VISIBLE
     }
     private fun updateUI(userPublicData: UserPublicData){
         val result = userPublicData.result.get(0)
@@ -105,55 +105,55 @@ class Dashboard : AppCompatActivity() {
         checkOnline(result.lastOnlineTimeSeconds)
     }
     private fun showQuestions(){
-        binding.NameQuestion.visibility = View.VISIBLE
-        binding.CurrentRatingQuestion.visibility = View.VISIBLE
-        binding.OrganizationQuestion.visibility = View.VISIBLE
-        binding.CityCountryQuestion.visibility = View.VISIBLE
-        binding.FriendOfQuestion.visibility = View.VISIBLE
-        binding.ContributionQuestion.visibility = View.VISIBLE
-        binding.RegisteredQuestion.visibility = View.VISIBLE
-        binding.MaxRankQuestion.visibility = View.VISIBLE
+        binding.publicDataId.NameQuestion.visibility = View.VISIBLE
+        binding.publicDataId.CurrentRatingQuestion.visibility = View.VISIBLE
+        binding.publicDataId.OrganizationQuestion.visibility = View.VISIBLE
+        binding.publicDataId.CityCountryQuestion.visibility = View.VISIBLE
+        binding.publicDataId.FriendOfQuestion.visibility = View.VISIBLE
+        binding.publicDataId.ContributionQuestion.visibility = View.VISIBLE
+        binding.publicDataId.RegisteredQuestion.visibility = View.VISIBLE
+        binding.publicDataId.MaxRankQuestion.visibility = View.VISIBLE
 
     }
     private fun updateOrganization(organization: String?){
-        binding.OrganizationAnswer.text = organization?:"NA"
+        binding.publicDataId.OrganizationAnswer.text = organization?: "NA"
 
     }
     private fun updateName(first: String?, last: String?){
         val name: String = if(first != null) "$first ${last ?: "NA"}" else last ?: "NA"
-        binding.NameAnswer.text = name
+        binding.publicDataId.NameAnswer.text = name
     }
     private fun updateRating(current: Int?, maximum: Int?){
-        binding.CurrentRatingAnswer.text = "${current ?: 0} (max. ${maximum ?: 0})"
+        binding.publicDataId.CurrentRatingAnswer.text = "${current ?: 0} (max. ${maximum ?: 0})"
 
     }
     private fun updateTitle(handle: String, rank: String?, max_rank: String?){
-        binding.titleTextView1.text = handle
-        binding.titleTextView2.text = getCapitalized((rank ?: ""))
-        binding.MaxRankAnswer.text = getCapitalized((max_rank ?: "NA"))
+        binding.publicDataId.titleTextView1.text = handle
+        binding.publicDataId.titleTextView2.text = getCapitalized((rank ?: ""))
+        binding.publicDataId.MaxRankAnswer.text = getCapitalized((max_rank ?: "NA"))
     }
     private fun updateCityCountry(city: String?, country: String?){
         val cityCountry: String = if(city != null) "$city, ${country ?: "NA"}" else country ?: "NA"
-        binding.CityCountryAnswer.text = cityCountry
+        binding.publicDataId.CityCountryAnswer.text = cityCountry
     }
     private fun updateContribution(contribution: Int?){
         if(contribution != null){
-            binding.ContributionAnswer.text = "$contribution"
+            binding.publicDataId.ContributionAnswer.text = "$contribution"
             if(contribution > 0){
                 colors["pupil"]?.let {
-                    binding.ContributionAnswer.setTextColor(resources.getColor(it))
-                    binding.ContributionAnswer.text = "+$contribution"
+                    binding.publicDataId.ContributionAnswer.setTextColor(resources.getColor(it))
+                    binding.publicDataId.ContributionAnswer.text = "+$contribution"
                 }
             }
         }else{
-            binding.ContributionAnswer.text = "NA"
+            binding.publicDataId.ContributionAnswer.text = "NA"
         }
     }
     private fun updateFriends(friends: Int?){
         if(friends != null){
-            binding.FriendOfAnswer.text = "$friends users"
+            binding.publicDataId.FriendOfAnswer.text = "$friends users"
         }else{
-            binding.FriendOfAnswer.text = "NA"
+            binding.publicDataId.FriendOfAnswer.text = "NA"
         }
     }
     private fun getDaysAgo(daysAgo: Int): Date {
@@ -178,9 +178,9 @@ class Dashboard : AppCompatActivity() {
             val date = getDaysAgo(days.toInt())
             Log.d("Dashboard", "$timeNow $timePrev $seconds $days")
             Log.d("Dashboard", "$date")
-            binding.RegisteredAnswer.text = getMonth(date.month) + " " + date.date + ", " + (date.year + 1900)
+            binding.publicDataId.RegisteredAnswer.text = getMonth(date.month) + " " + date.date + ", " + (date.year + 1900)
         } else {
-            binding.RegisteredAnswer.text = "No Info!"
+            binding.publicDataId.RegisteredAnswer.text = "No Info!"
         }
     }
 
@@ -191,26 +191,26 @@ class Dashboard : AppCompatActivity() {
             val seconds = timeNow - timePrev
             Log.d("Dashboard", "Seconds passed: $seconds")
             if(seconds <= 5 * 3600){ // online in the previous
-                binding.onlineIndicator.visibility = View.VISIBLE
+                binding.publicDataId.onlineIndicator.visibility = View.VISIBLE
             }else{
-                binding.onlineIndicator.visibility = View.INVISIBLE
+                binding.publicDataId.onlineIndicator.visibility = View.INVISIBLE
             }
             return
         }
-        binding.onlineIndicator.visibility = View.INVISIBLE
+        binding.publicDataId.onlineIndicator.visibility = View.INVISIBLE
     }
     private fun updateImage(url: String){
-        val downloader = DownloadImageTask(binding.profilePhotoImageView)
+        val downloader = DownloadImageTask(binding.publicDataId.profilePhotoImageView)
         downloader.execute("https:$url")
     }
     private fun updateColor(rank: String, max_rank: String) {
         Log.d("Dashboard", rank)
         colors[rank]?.let {
-            binding.titleTextView2.setTextColor(resources.getColor(it))
-            binding.profilePhotoImageView.borderColor = resources.getColor(it)
+            binding.publicDataId.titleTextView2.setTextColor(resources.getColor(it))
+            binding.publicDataId.profilePhotoImageView.borderColor = resources.getColor(it)
         }
         colors[max_rank]?.let{
-            binding.MaxRankAnswer.setTextColor(resources.getColor(it))
+            binding.publicDataId.MaxRankAnswer.setTextColor(resources.getColor(it))
         }
     }
     private fun getCapitalized(s: String) : String{
@@ -285,20 +285,20 @@ class Dashboard : AppCompatActivity() {
         })
     }
     private fun updateRanks(Wr : Int, totalW : Int, Cr : Int, totalC : Int){
-        binding.progressBar.visibility = View.INVISIBLE
-        binding.progressBar2.visibility = View.INVISIBLE
+        binding.publicDataId.progressBar.visibility = View.INVISIBLE
+        binding.publicDataId.progressBar2.visibility = View.INVISIBLE
         if(Wr != -1){
-            binding.WorldRankAnswer.text = "$Wr\n($totalW)"
+            binding.publicDataId.WorldRankAnswer.text = "$Wr\n($totalW)"
         }else{
-            binding.WorldRankAnswer.text = "NA"
+            binding.publicDataId.WorldRankAnswer.text = "NA"
         }
         if(Cr == -1){
-            binding.CountryRankAnswer.text = "NA"
+            binding.publicDataId.CountryRankAnswer.text = "NA"
         }else{
-            binding.CountryRankAnswer.text = "$Cr\n($totalC)"
+            binding.publicDataId.CountryRankAnswer.text = "$Cr\n($totalC)"
         }
-        binding.WorldRankAnswer.visibility = View.VISIBLE
-        binding.CountryRankAnswer.visibility = View.VISIBLE
+        binding.publicDataId.WorldRankAnswer.visibility = View.VISIBLE
+        binding.publicDataId.CountryRankAnswer.visibility = View.VISIBLE
     }
     private fun updateGraph(handle : String){
         val ratings = ArrayList<Entry>()
@@ -340,8 +340,8 @@ class Dashboard : AppCompatActivity() {
                     lineDataSet.setDrawValues(false)
                     dataSets.add(lineDataSet)
                     styleChart(max_here, min_here)
-                    binding.RatingGraph.data = LineData(dataSets)
-                    binding.RatingGraph.invalidate()
+                    binding.userGraphId.RatingGraph.data = LineData(dataSets)
+                    binding.userGraphId.RatingGraph.invalidate()
                 }else{
                     Log.d("Dashboard", "Contest Data Received null here!!!")
                     Toast.makeText(applicationContext, "Null Received in API contests ${response.code()}", Toast.LENGTH_LONG).show()
@@ -358,27 +358,27 @@ class Dashboard : AppCompatActivity() {
     }
     private fun styleChart(max_here : Int, min_here : Int){
         Log.d("Dashboard", "$max_here $min_here YAxis constraints")
-        binding.RatingGraph.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        binding.RatingGraph.axisLeft.setAxisMaxValue(max_here.toFloat())
-        binding.RatingGraph.axisLeft.setAxisMinValue(min_here.toFloat())
-        binding.RatingGraph.axisRight.setDrawLabels(false)
-        binding.RatingGraph.description.isEnabled = false
-        binding.RatingGraph.animateX(3000)
-        binding.RatingGraph.axisRight.setDrawGridLines(false)
-        binding.RatingGraph.setDrawBorders(true)
-        binding.RatingGraph.xAxis.setDrawLabels(false)
-        binding.RatingGraph.setBorderWidth(2f)
-        binding.RatingGraph.visibility = View.VISIBLE
-        binding.RatingGraph.legend.isEnabled = false
+        binding.userGraphId.RatingGraph.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        binding.userGraphId.RatingGraph.axisLeft.setAxisMaxValue(max_here.toFloat())
+        binding.userGraphId.RatingGraph.axisLeft.setAxisMinValue(min_here.toFloat())
+        binding.userGraphId.RatingGraph.axisRight.setDrawLabels(false)
+        binding.userGraphId.RatingGraph.description.isEnabled = false
+        binding.userGraphId.RatingGraph.animateX(3000)
+        binding.userGraphId.RatingGraph.axisRight.setDrawGridLines(false)
+        binding.userGraphId.RatingGraph.setDrawBorders(true)
+        binding.userGraphId.RatingGraph.xAxis.setDrawLabels(false)
+        binding.userGraphId.RatingGraph.setBorderWidth(2f)
+        binding.userGraphId.RatingGraph.visibility = View.VISIBLE
+        binding.userGraphId.RatingGraph.legend.isEnabled = false
         val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_YES -> {ContextCompat.getColor(applicationContext, R.color.white)}
             Configuration.UI_MODE_NIGHT_NO -> {ContextCompat.getColor(applicationContext, R.color.black)}
             else -> {ContextCompat.getColor(applicationContext, R.color.black)}
         }
-        binding.RatingGraph.axisLeft.textColor = color
-        binding.RatingGraph.setPinchZoom(false)
-        binding.RatingGraph.setScaleEnabled(false)
-        binding.RatingGraph.isHighlightPerTapEnabled = false
-        binding.RatingGraph.isHighlightPerDragEnabled = false
+        binding.userGraphId.RatingGraph.axisLeft.textColor = color
+        binding.userGraphId.RatingGraph.setPinchZoom(false)
+        binding.userGraphId.RatingGraph.setScaleEnabled(false)
+        binding.userGraphId.RatingGraph.isHighlightPerTapEnabled = false
+        binding.userGraphId.RatingGraph.isHighlightPerDragEnabled = false
     }
 }

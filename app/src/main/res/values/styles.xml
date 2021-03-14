@@ -18,4 +18,5 @@
         <item name="android:layout_marginRight">@dimen/margin_right_answers</item>
         <item name="android:layout_marginTop">@dimen/normal_margin_top</item>
     </style>
+
 </resources>
