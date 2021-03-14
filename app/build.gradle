@@ -59,7 +59,9 @@ dependencies {
 
     //json to object converter
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
+    //okhttp
+    implementation 'com.squareup.okhttp3:okhttp:3.3.1'
     //mpchart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
 }
