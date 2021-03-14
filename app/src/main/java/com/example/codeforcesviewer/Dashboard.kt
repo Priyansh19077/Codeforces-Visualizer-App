@@ -71,13 +71,14 @@ class Dashboard : AppCompatActivity() {
                     getAllUsersData(handle, userData.result.get(0).country)
                     updateGraph(handle)
                 } else {
-                    Toast.makeText(applicationContext, "${response.code()}", Toast.LENGTH_LONG).show()
+                    Log.d("Dashboard", "Null received in User Data ${response.code()}")
+                    Toast.makeText(applicationContext, "Null received in User Data ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<UserPublicData>, t: Throwable) {
                 Log.d("DashBoard", "Failure: ${t.localizedMessage}")
-                Toast.makeText(applicationContext, t.localizedMessage, Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Error in API User Data ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -269,13 +270,17 @@ class Dashboard : AppCompatActivity() {
                     }
                     updateRanks(worldRank, totalWorld, if(country != null) countryRank else -1, totalInCountry)
                 }else{
-                    Log.d("Dashboard", "Received null here!!!")
+                    Log.d("Dashboard", "Received null in Rank API ${response.code()}")
+                    Toast.makeText(applicationContext, "Null Received in Rank API: ${response.code()}", Toast.LENGTH_LONG).show()
+                    updateRanks(-1, -1, -1, -1)
                 }
             }
 
             override fun onFailure(call: Call<UserPublicData>, t: Throwable) {
                 Log.d("DashBoard", "Failure: ${t.localizedMessage}")
-                Log.d("Dashboard", "Error in API call ${t.localizedMessage}")
+                Log.d("Dashboard", "Error in Rank API ${t.localizedMessage}")
+                Toast.makeText(applicationContext, "Error in API call Rank API: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+                updateRanks(-1, -1, -1, -1)
             }
         })
     }
@@ -339,12 +344,14 @@ class Dashboard : AppCompatActivity() {
                     binding.RatingGraph.invalidate()
                 }else{
                     Log.d("Dashboard", "Contest Data Received null here!!!")
+                    Toast.makeText(applicationContext, "Null Received in API contests ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<UserContests>, t: Throwable) {
                 Log.d("DashBoard", "Failure: ${t.localizedMessage}")
-                Log.d("Dashboard", "Error in API call ${t.localizedMessage}")
+                Log.d("Dashboard", "Error in API contests ${t.localizedMessage}")
+                Toast.makeText(applicationContext, "Error in API contests ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
         })
 
