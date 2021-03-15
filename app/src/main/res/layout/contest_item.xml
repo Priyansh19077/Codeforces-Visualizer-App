@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:divider="#97000000"
+        android:showDividers="middle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <TextView
+            style="@style/ContestItem"
+            android:id="@+id/contest_number"
+            android:layout_weight="1"
+            tools:text="190" />
+
+        <TextView
+            android:id="@+id/contest_name"
+            style="@style/ContestItem"
+            android:layout_weight="5"
+            tools:text="Codeforces Round #581 (Div. 2)" />
+
+        <TextView
+            android:id="@+id/contest_rank"
+            style="@style/ContestItem"
+            android:layout_weight="1.5"
+            tools:text="1023"/>
+
+        <TextView
+            android:id="@+id/contest_rating_change"
+            style="@style/ContestItem"
+            android:layout_weight="1.5"
+            tools:text="+270"/>
+
+        <TextView
+            android:id="@+id/contest_new_rating"
+            style="@style/ContestItem"
+            android:layout_weight="1.5"
+            tools:text="1970"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

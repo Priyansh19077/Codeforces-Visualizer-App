@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="15dp"
     android:paddingTop="10dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:paddingBottom="15dp"
+    tools:context=".Dashboard">
+
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/RatingGraph"
@@ -15,17 +17,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible">
-    </com.github.mikephil.charting.charts.LineChart>
+        tools:visibility="visible" />
 
-    <ExpandableListView
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_marginTop="10dp"
-        android:background="#E91E63"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/RatingGraph" />
-
+<!--    <ExpandableListView-->
+<!--        android:id="@+id/ContestDataViewing"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/RatingGraph"/>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

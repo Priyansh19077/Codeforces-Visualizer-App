@@ -4,6 +4,7 @@
     <dimen name="question_width">140dp</dimen>
     <dimen name="online_circle_side">35dp</dimen>
     <dimen name="text_normal_size">15sp</dimen>
+    <dimen name="text_smaller_size">12sp</dimen>
     <dimen name="text_bigger_size">17sp</dimen>
     <dimen name="padding_icon">10dp</dimen>
     <dimen name="profile_photo_width">180dp</dimen>

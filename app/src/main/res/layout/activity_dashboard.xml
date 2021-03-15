@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="1000dp"
+    android:layout_height="wrap_content"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     tools:context=".Dashboard">
@@ -55,6 +55,8 @@
                 android:id="@+id/user_graph_id"
                 layout="@layout/user_graph" />
         </com.google.android.material.card.MaterialCardView>
+
+
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/UserRatingSolved"

@@ -19,4 +19,13 @@
         <item name="android:layout_marginTop">@dimen/normal_margin_top</item>
     </style>
 
+    <style name="ContestItem">
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:textSize">@dimen/text_smaller_size</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
 </resources>

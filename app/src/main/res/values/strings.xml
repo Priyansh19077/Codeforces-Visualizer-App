@@ -24,5 +24,6 @@
     <string name="stalk_profile">Stalk Profile</string>
     <string name="global_rank">Global Rank</string>
     <string name="country_rank">Country Rank</string>
+    <string name="rated_contests">Rated Contests</string>
 
 </resources>
