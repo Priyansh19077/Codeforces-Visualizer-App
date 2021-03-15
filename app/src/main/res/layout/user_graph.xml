@@ -19,13 +19,18 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
-<!--    <ExpandableListView-->
-<!--        android:id="@+id/ContestDataViewing"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="5dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/RatingGraph"/>-->
+    <TextView
+        android:id="@+id/contest_drop_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:drawablePadding="10dp"
+        android:gravity="center"
+        android:text="@string/rated_contests_details"
+        android:drawableEnd="@drawable/contest_drop_down_icon"
+        android:textSize="@dimen/text_normal_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/RatingGraph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

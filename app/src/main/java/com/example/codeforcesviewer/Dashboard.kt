@@ -12,7 +12,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.codeforcesviewer.UserData.Contests
 import com.example.codeforcesviewer.UserData.UserContests
 import com.example.codeforcesviewer.UserData.UserPublicData
 import com.example.codeforcesviewer.databinding.ActivityDashboardBinding
@@ -31,7 +30,7 @@ import java.io.InputStream
 import java.net.URL
 import java.time.Instant
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.collections.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -376,7 +375,6 @@ class Dashboard : AppCompatActivity() {
                     styleChart(max_here, min_here)
                     userGraphBinding.RatingGraph.data = LineData(dataSets)
                     userGraphBinding.RatingGraph.invalidate()
-                    fillContestData(dataRetured.result)
                 } else {
                     Log.d("Dashboard", "Contest Data Received null here!!!")
                     Toast.makeText(applicationContext, "Null Received in API contests ${response.code()}", Toast.LENGTH_LONG).show()
@@ -426,13 +424,7 @@ class Dashboard : AppCompatActivity() {
         userGraphBinding.RatingGraph.isHighlightPerDragEnabled = false
     }
 
-
     private fun updateRatingSolved(handle: String) {
 
-    }
-
-    private fun fillContestData(contests: List<Contests>) {
-//        val expandableListView = findViewById<ExpandableListView>(R.id.ContestDataViewing)
-//        expandableListView.setAdapter(contestExpandableListAdapter(applicationContext, mutableListOf("Rated Contests"), contests))
     }
 }

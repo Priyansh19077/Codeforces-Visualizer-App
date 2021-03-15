@@ -25,5 +25,6 @@
     <string name="global_rank">Global Rank</string>
     <string name="country_rank">Country Rank</string>
     <string name="rated_contests">Rated Contests</string>
+    <string name="rated_contests_details">Rated Contests Details</string>
 
 </resources>
