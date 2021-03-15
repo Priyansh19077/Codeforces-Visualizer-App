@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="15dp"
     android:paddingTop="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/RatingGraph"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
     </com.github.mikephil.charting.charts.LineChart>
+
+    <ExpandableListView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginTop="10dp"
+        android:background="#E91E63"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/RatingGraph" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
