@@ -9,7 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="online">#E426FF00</color>
     
-    <color name="Newbie">#9E5A4C4C</color>
+    <color name="Newbie">#9EAC9090</color>
     <color name="Pupil">#DC04D307</color>
     <color name="Specialist">#0CE6B5</color>
     <color name="Expert">#0323F3</color>
@@ -22,6 +22,9 @@
 
     <color name="ratingGraph">#FFD041</color>
     <color name="maxRating">#FF0000</color>
+
+    <color name="positiveChange">#33CC20</color>
+    <color name="negativeChange">#FF3E3E</color>
 
     <color name="grey">#9F9494</color>
     <color name="darkGrey">#3C3333</color>

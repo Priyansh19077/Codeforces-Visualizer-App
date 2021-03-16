@@ -1,5 +1,6 @@
 package com.example.codeforcesviewer
 
+import android.app.Activity
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,8 +11,11 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import com.example.codeforcesviewer.UserData.ContestAdapter
+import com.example.codeforcesviewer.UserData.ContestDataToShow
 import com.example.codeforcesviewer.UserData.UserContests
 import com.example.codeforcesviewer.UserData.UserPublicData
 import com.example.codeforcesviewer.databinding.ActivityDashboardBinding
@@ -35,7 +39,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class Dashboard : AppCompatActivity() {
+class Dashboard : Activity() {
     lateinit var binding: ActivityDashboardBinding
     lateinit var publicDataBinding: UserPublicDataBinding
     lateinit var userGraphBinding: UserGraphBinding
@@ -60,6 +64,7 @@ class Dashboard : AppCompatActivity() {
         publicDataBinding = binding.publicDataId
         userGraphBinding = binding.userGraphId
         userSolvedRatingsBinding = binding.userSolvedRatingId
+
         val handle: String? = intent.getStringExtra("handle")
         Log.d("Dashboard", "Handle Received: $handle")
         if (handle == null) {
@@ -78,8 +83,8 @@ class Dashboard : AppCompatActivity() {
                 val userData = response.body()
                 if (userData != null) {
                     updateUI(userData)
-//                    showRanks()
-//                    getAllUsersData(handle, userData.result.get(0).country)
+                    showRanks()
+                    getAllUsersData(handle, userData.result.get(0).country)
                     updateGraph(handle)
                     updateRatingSolved(handle)
                 } else {
@@ -343,6 +348,16 @@ class Dashboard : AppCompatActivity() {
                     var max_here = -2000000
                     var min_here = 2000000
                     var max_limit: Long = 0
+                    var position = 0
+                    val newContestTitle = ContestDataToShow("S.No",
+                            "Contest Name",
+                            "Rank",
+                            "Rating Change",
+                            "New Rating",
+                            -1,
+                            -1)
+                    val contestToShow = mutableListOf<ContestDataToShow>()
+                    contestToShow.add(newContestTitle)
                     val min_time = if (dataRetured.result.isNotEmpty()) dataRetured.result[0].ratingUpdateTimeSeconds else 0
                     for (contest in dataRetured.result) {
                         Log.d("Dashboard", "Contest Next ${contest.toString()}")
@@ -350,6 +365,17 @@ class Dashboard : AppCompatActivity() {
                         min_here = min(min_here, contest.newRating)
                         Log.d("Dashboard", "Adding point ${contest.newRating} ${(contest.ratingUpdateTimeSeconds - min_time).toFloat() / 1000}")
                         ratings.add(Entry((contest.ratingUpdateTimeSeconds - min_time).toFloat() / 1000, contest.newRating.toFloat()))
+                        val item = contest
+                        position++
+                        val newContest = ContestDataToShow(
+                                (position).toString(),
+                                item.contestName?:"Unknown Contest",
+                                if(item.rank != null) item.rank.toString() else "NA",
+                        (if(item.newRating - item.oldRating > 0) "+" else "") + (item.newRating - item.oldRating).toString(),
+                                item.newRating.toString(),
+                        if(item.newRating - item.oldRating > 0) R.color.positiveChange else R.color.negativeChange,
+                        getRatingColor(item.newRating))
+                        contestToShow.add(newContest)
                     }
                     var count = 0
                     for (entry in ratings) {
@@ -375,6 +401,20 @@ class Dashboard : AppCompatActivity() {
                     styleChart(max_here, min_here)
                     userGraphBinding.RatingGraph.data = LineData(dataSets)
                     userGraphBinding.RatingGraph.invalidate()
+                    userGraphBinding.contestDropDown.setOnClickListener {
+                        val builder = AlertDialog.Builder(this@Dashboard)
+                        val titleView = layoutInflater.inflate(R.layout.contest_heading, null)
+                        builder.setCustomTitle(titleView)
+                        val myDataset = dataRetured.result
+                        val recyclerView = layoutInflater.inflate(R.layout.contest_recycler_view, null)
+                        val recyclerViewView = recyclerView.findViewById<RecyclerView>(R.id.contest_recycler_view_view)
+                        recyclerViewView.adapter = ContestAdapter(this@Dashboard, contestToShow)
+                        recyclerViewView.setHasFixedSize(false)
+                        builder.setCancelable(true)
+                        builder.setView(recyclerView)
+                        val dialog = builder.create()
+                        dialog.show()
+                    }
                 } else {
                     Log.d("Dashboard", "Contest Data Received null here!!!")
                     Toast.makeText(applicationContext, "Null Received in API contests ${response.code()}", Toast.LENGTH_LONG).show()
@@ -397,7 +437,7 @@ class Dashboard : AppCompatActivity() {
         userGraphBinding.RatingGraph.axisLeft.setAxisMinValue(min_here.toFloat())
         userGraphBinding.RatingGraph.axisRight.setDrawLabels(false)
         userGraphBinding.RatingGraph.description.isEnabled = false
-        userGraphBinding.RatingGraph.animateX(3000)
+        userGraphBinding.RatingGraph.animateX(2000)
         userGraphBinding.RatingGraph.axisRight.setDrawGridLines(false)
         userGraphBinding.RatingGraph.setDrawBorders(true)
         userGraphBinding.RatingGraph.xAxis.setDrawLabels(false)
@@ -423,7 +463,27 @@ class Dashboard : AppCompatActivity() {
         userGraphBinding.RatingGraph.isHighlightPerTapEnabled = false
         userGraphBinding.RatingGraph.isHighlightPerDragEnabled = false
     }
-
+    private fun getRatingColor(rating : Int): Int{
+        if(rating < 1200)
+            return R.color.Newbie
+        if(rating < 1400)
+            return R.color.Pupil
+        if(rating < 1600)
+            return R.color.Specialist
+        if(rating < 1900)
+            return R.color.Expert
+        if(rating < 2100)
+            return R.color.CandidateMaster
+        if(rating < 2300)
+            return R.color.Master
+        if(rating < 2400)
+            return R.color.InternationalMaster
+        if(rating < 2700)
+            return R.color.GrandMaster
+        if(rating < 3000)
+            return R.color.InternationalGrandmaster
+        return R.color.LegendaryGrandmaster
+    }
     private fun updateRatingSolved(handle: String) {
 
     }
