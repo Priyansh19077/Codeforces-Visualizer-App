@@ -15,5 +15,5 @@
     <dimen name="bigger_margin_top">15dp</dimen>
     <dimen name="margin_left_questions">30dp</dimen>
     <dimen name="margin_left_answers">40dp</dimen>
-    <dimen name="margin_right_answers">10dp</dimen>
+    <dimen name="margin_right_answers">5dp</dimen>
 </resources>

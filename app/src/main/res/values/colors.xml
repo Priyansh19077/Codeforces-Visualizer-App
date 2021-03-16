@@ -9,18 +9,18 @@
     <color name="white">#FFFFFFFF</color>
     <color name="online">#E426FF00</color>
     
-    <color name="Newbie">#9EAC9090</color>
+    <color name="Newbie">#9EBAA4A4</color>
     <color name="Pupil">#DC04D307</color>
     <color name="Specialist">#0CE6B5</color>
-    <color name="Expert">#0323F3</color>
-    <color name="CandidateMaster">#A1049F</color>
-    <color name="Master">#D6A906</color>
-    <color name="InternationalMaster">#BC7000</color>
-    <color name="GrandMaster">#DD3F3F</color>
-    <color name="InternationalGrandmaster">#F81A1A</color>
-    <color name="LegendaryGrandmaster">#C10303</color>
+    <color name="Expert">#203EFF</color>
+    <color name="CandidateMaster">#CF04CD</color>
+    <color name="Master">#FBC80C</color>
+    <color name="InternationalMaster">#FB9704</color>
+    <color name="GrandMaster">#F83B3B</color>
+    <color name="InternationalGrandmaster">#F81D1D</color>
+    <color name="LegendaryGrandmaster">#ED0000</color>
 
-    <color name="ratingGraph">#FFD041</color>
+    <color name="ratingGraph">#FFCD33</color>
     <color name="maxRating">#FF0000</color>
 
     <color name="positiveChange">#33CC20</color>
