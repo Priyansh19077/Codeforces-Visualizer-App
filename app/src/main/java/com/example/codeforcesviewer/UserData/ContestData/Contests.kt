@@ -1,4 +1,4 @@
-package com.example.codeforcesviewer.UserData
+package com.example.codeforcesviewer.UserData.ContestData
 
 data class Contests(
     val contestId: Int,

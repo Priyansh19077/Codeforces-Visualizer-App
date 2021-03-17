@@ -14,10 +14,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.codeforcesviewer.UserData.ContestAdapter
-import com.example.codeforcesviewer.UserData.ContestDataToShow
-import com.example.codeforcesviewer.UserData.UserContests
-import com.example.codeforcesviewer.UserData.UserPublicData
+import com.example.codeforcesviewer.UserData.ContestData.ContestAdapter
+import com.example.codeforcesviewer.UserData.ContestData.ContestDataToShow
+import com.example.codeforcesviewer.UserData.ContestData.UserContests
+import com.example.codeforcesviewer.UserData.SubmissionData.Problem
+import com.example.codeforcesviewer.UserData.SubmissionData.UserSubmissions
+import com.example.codeforcesviewer.UserData.UserInfo.UserPublicData
 import com.example.codeforcesviewer.databinding.ActivityDashboardBinding
 import com.example.codeforcesviewer.databinding.UserGraphBinding
 import com.example.codeforcesviewer.databinding.UserPublicDataBinding
@@ -71,6 +73,8 @@ class Dashboard : Activity() {
             Log.d("Dashboard", "No Handle received here")
         } else {
             getData(handle)
+            updateGraph(handle)
+            updateRatingSolved(handle)
         }
     }
 
@@ -85,8 +89,6 @@ class Dashboard : Activity() {
                     updateUI(userData)
                     showRanks()
                     getAllUsersData(handle, userData.result.get(0).country)
-                    updateGraph(handle)
-                    updateRatingSolved(handle)
                 } else {
                     Log.d("Dashboard", "Null received in User Data ${response.code()}")
                     Toast.makeText(applicationContext, "Null received in User Data ${response.code()}", Toast.LENGTH_LONG).show()
@@ -369,12 +371,12 @@ class Dashboard : Activity() {
                         position++
                         val newContest = ContestDataToShow(
                                 (position).toString(),
-                                item.contestName?:"Unknown Contest",
-                                if(item.rank != null) item.rank.toString() else "NA",
-                        (if(item.newRating - item.oldRating > 0) "+" else "") + (item.newRating - item.oldRating).toString(),
+                                item.contestName ?: "Unknown Contest",
+                                if (item.rank != null) item.rank.toString() else "NA",
+                                (if (item.newRating - item.oldRating > 0) "+" else "") + (item.newRating - item.oldRating).toString(),
                                 item.newRating.toString(),
-                        if(item.newRating - item.oldRating > 0) R.color.positiveChange else R.color.negativeChange,
-                        getRatingColor(item.newRating))
+                                if (item.newRating - item.oldRating > 0) R.color.positiveChange else R.color.negativeChange,
+                                getRatingColor(item.newRating))
                         contestToShow.add(newContest)
                     }
                     var count = 0
@@ -463,28 +465,81 @@ class Dashboard : Activity() {
         userGraphBinding.RatingGraph.isHighlightPerTapEnabled = false
         userGraphBinding.RatingGraph.isHighlightPerDragEnabled = false
     }
-    private fun getRatingColor(rating : Int): Int{
-        if(rating < 1200)
+
+    private fun getRatingColor(rating: Int): Int {
+        if (rating < 1200)
             return R.color.Newbie
-        if(rating < 1400)
+        if (rating < 1400)
             return R.color.Pupil
-        if(rating < 1600)
+        if (rating < 1600)
             return R.color.Specialist
-        if(rating < 1900)
+        if (rating < 1900)
             return R.color.Expert
-        if(rating < 2100)
+        if (rating < 2100)
             return R.color.CandidateMaster
-        if(rating < 2300)
+        if (rating < 2300)
             return R.color.Master
-        if(rating < 2400)
+        if (rating < 2400)
             return R.color.InternationalMaster
-        if(rating < 2700)
+        if (rating < 2700)
             return R.color.GrandMaster
-        if(rating < 3000)
+        if (rating < 3000)
             return R.color.InternationalGrandmaster
         return R.color.LegendaryGrandmaster
     }
+
     private fun updateRatingSolved(handle: String) {
+        val submissionData: Call<UserSubmissions> = FetchData.instance.getSubmissions(handle)
+        Log.d("Dashboard", "Getting user submissions now")
+        submissionData.enqueue(object : Callback<UserSubmissions> {
+            override fun onResponse(call: Call<UserSubmissions>, response: Response<UserSubmissions>) {
+                Log.d("Dashboard", "${response.code()}")
+                val userSubmissions = response.body()
+                if (userSubmissions != null) {
+                    var countAc = 0
+                    val mapDifficulty = mutableMapOf<String, Problem>()
+                    val numberOfProblemsWithDifficulty = mutableMapOf<Int, Int>()
+                    val numberOfProblemsWithIndex = mutableMapOf<String, Int>()
+                    val total = userSubmissions.result.size
+                    for (submission in userSubmissions.result) {
+                        if (submission.verdict == resources.getString(R.string.submission_accepted)) {
+                            var problem = submission.problem.contestId.toString() + submission.problem.index
+                            mapDifficulty.put(problem, submission.problem)
+                            countAc++
+                        }
+                    }
+                    for (problem in mapDifficulty) {
+                        if (problem.value.rating != null) {
+                            numberOfProblemsWithDifficulty[problem.value.rating!!] = 1 + (numberOfProblemsWithDifficulty[problem.value.rating!!]
+                                    ?: 0)
+                        }
+                        val problemIndex = problem.value.index[0].toString()
+                        if(numberOfProblemsWithIndex.containsKey(problemIndex)){
+                            numberOfProblemsWithIndex[problemIndex] =  1 + (numberOfProblemsWithIndex[problemIndex]?:0)
+                        }else{
+                            numberOfProblemsWithIndex[problemIndex] = 1
+                        }
+                    }
+                    Log.d("Dashboard", "Total ACs $countAc")
+                    Log.d("Dashboard", "Total ACs here ${mapDifficulty.size}")
+                    Log.d("Dashboard", "Total ACs with difficulty ${numberOfProblemsWithDifficulty.toString()}")
+                    Log.d("Dashboard", "Total ACs with index ${numberOfProblemsWithIndex.toString()}")
+                    updateProblemGraphs(numberOfProblemsWithDifficulty, numberOfProblemsWithIndex)
+                } else {
+                    Log.d("Dashboard", "Received null in Submissions API ${response.code()}")
+                    Toast.makeText(applicationContext, "Null Received in Submissions API: ${response.code()}", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<UserSubmissions>, t: Throwable) {
+                Log.d("DashBoard", "Failure: ${t.localizedMessage}")
+                Log.d("Dashboard", "Error in Submissions API ${t.localizedMessage}")
+                Toast.makeText(applicationContext, "Error in API call Submissions API: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+                updateRanks(-1, -1, -1, -1)
+            }
+        })
+    }
+    private fun updateProblemGraphs(difficulty : MutableMap<Int, Int>, index : MutableMap<String, Int>){
 
     }
 }

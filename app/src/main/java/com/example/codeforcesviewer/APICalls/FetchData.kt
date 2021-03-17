@@ -1,7 +1,8 @@
 package com.example.codeforcesviewer
 
-import com.example.codeforcesviewer.UserData.UserContests
-import com.example.codeforcesviewer.UserData.UserPublicData
+import com.example.codeforcesviewer.UserData.ContestData.UserContests
+import com.example.codeforcesviewer.UserData.SubmissionData.UserSubmissions
+import com.example.codeforcesviewer.UserData.UserInfo.UserPublicData
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -26,6 +27,13 @@ interface ProfileDataFetch {
     fun getUserRatedContests(
             @Query("handle") handle: String,
             @Query("lang") lang: String = "en"): retrofit2.Call<UserContests>
+
+    @GET("user.status")
+    fun getSubmissions(
+            @Query("handle") handle : String,
+            @Query("lang") lang : String = "en",
+            @Query("from") from : Int = 1,
+            @Query("count") count : Int = 100000000) : retrofit2.Call<UserSubmissions>
 }
 
 

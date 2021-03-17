@@ -1,4 +1,4 @@
-package com.example.codeforcesviewer.UserData
+package com.example.codeforcesviewer.UserData.UserInfo
 
 data class Users(
     val avatar: String?,

@@ -27,4 +27,14 @@
     <string name="rated_contests">Rated Contests</string>
     <string name="rated_contests_details">Rated Contests Details</string>
 
+
+    <string name="submission_accepted">OK</string>
+    <string name="submission_wrong_answer">WRONG_ANSWER</string>
+    <string name="submission_compilation_error">COMPILATION_ERROR</string>
+    <string name="submission_time_limit_exceeded">TIME_LIMIT_EXCEEDED</string>
+    <string name="submission_runtime_error">RUNTIME_ERROR</string>
+    <string name="submission_memory_limit_exceeded">MEMORY_LIMIT_EXCEEDED</string>
+    <string name="submission_idleness_limit_exceeded">IDLENESS_LIMIT_EXCEEDED</string>
+
+
 </resources>

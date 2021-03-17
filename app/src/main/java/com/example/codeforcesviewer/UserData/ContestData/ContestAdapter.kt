@@ -1,4 +1,4 @@
-package com.example.codeforcesviewer.UserData
+package com.example.codeforcesviewer.UserData.ContestData
 
 import android.content.Context
 import android.view.LayoutInflater
