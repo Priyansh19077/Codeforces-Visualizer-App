@@ -8,7 +8,7 @@
     android:paddingTop="10dp">
 
     <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/RatingGraph"
+        android:id="@+id/ProblemRatingGraph"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:visibility="invisible"

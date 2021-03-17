@@ -25,9 +25,7 @@ import com.example.codeforcesviewer.databinding.UserGraphBinding
 import com.example.codeforcesviewer.databinding.UserPublicDataBinding
 import com.example.codeforcesviewer.databinding.UserSolvedRatingsBinding
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import retrofit2.Call
 import retrofit2.Callback
@@ -66,7 +64,6 @@ class Dashboard : Activity() {
         publicDataBinding = binding.publicDataId
         userGraphBinding = binding.userGraphId
         userSolvedRatingsBinding = binding.userSolvedRatingId
-
         val handle: String? = intent.getStringExtra("handle")
         Log.d("Dashboard", "Handle Received: $handle")
         if (handle == null) {
@@ -400,7 +397,7 @@ class Dashboard : Activity() {
                     lineDataSet.circleHoleColor = resources.getColor(R.color.maxRating)
                     lineDataSet.setDrawValues(false)
                     dataSets.add(lineDataSet)
-                    styleChart(max_here, min_here)
+                    StyleRatingGraph(max_here, min_here)
                     userGraphBinding.RatingGraph.data = LineData(dataSets)
                     userGraphBinding.RatingGraph.invalidate()
                     userGraphBinding.contestDropDown.setOnClickListener {
@@ -432,7 +429,7 @@ class Dashboard : Activity() {
 
     }
 
-    private fun styleChart(max_here: Int, min_here: Int) {
+    private fun StyleRatingGraph(max_here: Int, min_here: Int) {
         Log.d("Dashboard", "$max_here $min_here YAxis constraints")
         userGraphBinding.RatingGraph.xAxis.position = XAxis.XAxisPosition.BOTTOM
         userGraphBinding.RatingGraph.axisLeft.setAxisMaxValue(max_here.toFloat())
@@ -514,9 +511,10 @@ class Dashboard : Activity() {
                                     ?: 0)
                         }
                         val problemIndex = problem.value.index[0].toString()
-                        if(numberOfProblemsWithIndex.containsKey(problemIndex)){
-                            numberOfProblemsWithIndex[problemIndex] =  1 + (numberOfProblemsWithIndex[problemIndex]?:0)
-                        }else{
+                        if (numberOfProblemsWithIndex.containsKey(problemIndex)) {
+                            numberOfProblemsWithIndex[problemIndex] = 1 + (numberOfProblemsWithIndex[problemIndex]
+                                    ?: 0)
+                        } else {
                             numberOfProblemsWithIndex[problemIndex] = 1
                         }
                     }
@@ -539,7 +537,62 @@ class Dashboard : Activity() {
             }
         })
     }
-    private fun updateProblemGraphs(difficulty : MutableMap<Int, Int>, index : MutableMap<String, Int>){
 
+    private fun updateProblemGraphs(difficulty: MutableMap<Int, Int>, index: MutableMap<String, Int>) {
+//        userSolvedRatingsBinding.ProblemRatingGraph.setDrawBarShadow(true)
+        userSolvedRatingsBinding.ProblemRatingGraph.setDrawGridBackground(true)
+        val barentries = ArrayList<BarEntry>()
+        var min_rating = 1000000
+        var max_rating = -1000000
+        for (element in difficulty) {
+            barentries.add(BarEntry(element.key.toFloat(), element.value.toFloat()))
+            min_rating = min(min_rating, element.key)
+            max_rating = max(max_rating, element.key)
+        }
+        barentries.sortedBy { it.x }
+        val barDataSet = BarDataSet(barentries, "Difficulty")
+        barDataSet.setColor(resources.getColor(R.color.barGraphColor))
+        val barData = BarData()
+        barData.addDataSet(barDataSet)
+        barData.barWidth = 50f
+        userSolvedRatingsBinding.ProblemRatingGraph.data = barData
+
+
+        if (difficulty.size > 0) {
+            userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum = (min_rating - 100).toFloat()
+            userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum = (max_rating + 100).toFloat()
+        }
+        userSolvedRatingsBinding.ProblemRatingGraph.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        userSolvedRatingsBinding.ProblemRatingGraph.axisRight.setDrawLabels(false)
+        userSolvedRatingsBinding.ProblemRatingGraph.description.isEnabled = false
+        userSolvedRatingsBinding.ProblemRatingGraph.animateY(2000)
+        userSolvedRatingsBinding.ProblemRatingGraph.axisRight.setDrawGridLines(false)
+        userSolvedRatingsBinding.ProblemRatingGraph.setDrawBorders(true)
+        userSolvedRatingsBinding.ProblemRatingGraph.setBorderWidth(1.5f)
+        userSolvedRatingsBinding.ProblemRatingGraph.visibility = VISIBLE
+        userSolvedRatingsBinding.ProblemRatingGraph.legend.isEnabled = false
+        binding.UserRatingSolved.visibility = VISIBLE
+
+        val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> {
+                ContextCompat.getColor(applicationContext, R.color.white)
+            }
+            Configuration.UI_MODE_NIGHT_NO -> {
+                ContextCompat.getColor(applicationContext, R.color.black)
+            }
+            else -> {
+                ContextCompat.getColor(applicationContext, R.color.black)
+            }
+        }
+
+        userSolvedRatingsBinding.ProblemRatingGraph.xAxis.labelCount = 5
+        userSolvedRatingsBinding.ProblemRatingGraph.axisLeft.labelCount = 4
+        userSolvedRatingsBinding.ProblemRatingGraph.axisLeft.textColor = color
+        userSolvedRatingsBinding.ProblemRatingGraph.setPinchZoom(false)
+        userSolvedRatingsBinding.ProblemRatingGraph.elevation = 10f
+        userSolvedRatingsBinding.ProblemRatingGraph.setScaleEnabled(false)
+        userSolvedRatingsBinding.ProblemRatingGraph.isHighlightPerTapEnabled = false
+        userSolvedRatingsBinding.ProblemRatingGraph.isHighlightPerDragEnabled = false
+        userSolvedRatingsBinding.ProblemRatingGraph.invalidate()
     }
 }

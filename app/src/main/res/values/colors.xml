@@ -29,4 +29,6 @@
     <color name="grey">#9F9494</color>
     <color name="darkGrey">#3C3333</color>
 
+    <color name="barGraphColor">#3D7EEC</color>
+
 </resources>
