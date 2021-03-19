@@ -11,7 +11,6 @@
     <TextView
         android:id="@+id/TitleText"
         android:text="Rating Graph"
-        android:textColor="#3E5BC3"
         style="@style/TitleCardTextBox"
         android:drawableStart="@drawable/rating_graph_icon"
         app:layout_constraintStart_toStartOf="parent"

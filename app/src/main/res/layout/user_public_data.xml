@@ -11,7 +11,6 @@
     <TextView
         android:id="@+id/TitleText"
         android:text="User Information"
-        android:textColor="#3E5BC3"
         style="@style/TitleCardTextBox"
         android:drawableStart="@drawable/info_icon"
         app:layout_constraintStart_toStartOf="parent"
@@ -170,7 +169,7 @@
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title_text_view2"
-        app:drawableStartCompat="@drawable/name_icon" />
+        android:drawableStart="@drawable/name_icon" />
 
     <TextView
         android:id="@+id/CurrentRatingQuestion"
@@ -179,7 +178,7 @@
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/NameAnswer"
-        app:drawableStartCompat="@drawable/rating_icon" />
+        android:drawableStart="@drawable/rating_icon" />
 
     <TextView
         android:id="@+id/MaxRankQuestion"
@@ -188,7 +187,7 @@
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CurrentRatingAnswer"
-        app:drawableStartCompat="@drawable/besttitle_icon" />
+        android:drawableStart="@drawable/besttitle_icon" />
 
     <TextView
         android:id="@+id/OrganizationQuestion"
@@ -197,7 +196,7 @@
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/MaxRankAnswer"
-        app:drawableStartCompat="@drawable/organization_icon" />
+        android:drawableStart="@drawable/organization_icon" />
 
     <TextView
         android:id="@+id/City_CountryQuestion"
@@ -206,7 +205,7 @@
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/OrganizationAnswer"
-        app:drawableStartCompat="@drawable/place_icon" />
+        android:drawableStart="@drawable/place_icon" />
 
     <TextView
         android:id="@+id/ContributionQuestion"
@@ -215,7 +214,7 @@
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/City_CountryAnswer"
-        app:drawableStartCompat="@drawable/contribution_icon" />
+        android:drawableStart="@drawable/contribution_icon" />
 
     <TextView
         android:id="@+id/FriendOfQuestion"
@@ -224,7 +223,7 @@
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ContributionAnswer"
-        app:drawableStartCompat="@drawable/friends_icon" />
+        android:drawableStart="@drawable/friends_icon" />
 
     <TextView
         android:id="@+id/RegisteredQuestion"
@@ -233,7 +232,7 @@
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/FriendOfAnswer"
-        app:drawableStartCompat="@drawable/registered_icon" />
+        android:drawableStart="@drawable/registered_icon" />
 
     <!--Questions Text Boxes End-->
     <!--Answers Text Boxes Start-->
