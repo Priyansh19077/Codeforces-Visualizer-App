@@ -17,15 +17,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.codeforcesviewer.UserData.ContestData.ContestAdapter
 import com.example.codeforcesviewer.UserData.ContestData.ContestDataToShow
 import com.example.codeforcesviewer.UserData.ContestData.UserContests
+import com.example.codeforcesviewer.UserData.Styling.BarChartStyling
+import com.example.codeforcesviewer.UserData.Styling.LineChartStyling
 import com.example.codeforcesviewer.UserData.SubmissionData.Problem
 import com.example.codeforcesviewer.UserData.SubmissionData.UserSubmissions
 import com.example.codeforcesviewer.UserData.UserInfo.UserPublicData
-import com.example.codeforcesviewer.databinding.ActivityDashboardBinding
-import com.example.codeforcesviewer.databinding.UserGraphBinding
-import com.example.codeforcesviewer.databinding.UserPublicDataBinding
-import com.example.codeforcesviewer.databinding.UserSolvedRatingsBinding
-import com.github.mikephil.charting.components.XAxis
+import com.example.codeforcesviewer.databinding.*
 import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,7 +43,9 @@ class Dashboard : Activity() {
     lateinit var publicDataBinding: UserPublicDataBinding
     lateinit var userGraphBinding: UserGraphBinding
     lateinit var userSolvedRatingsBinding: UserSolvedRatingsBinding
+    lateinit var userSolvedIndexBinding: UserSolvedIndexBinding
     private lateinit var colors: Map<String, Int>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
@@ -64,6 +65,7 @@ class Dashboard : Activity() {
         publicDataBinding = binding.publicDataId
         userGraphBinding = binding.userGraphId
         userSolvedRatingsBinding = binding.userSolvedRatingId
+        userSolvedIndexBinding = binding.userSolvedIndexId
         val handle: String? = intent.getStringExtra("handle")
         Log.d("Dashboard", "Handle Received: $handle")
         if (handle == null) {
@@ -431,57 +433,29 @@ class Dashboard : Activity() {
 
     private fun StyleRatingGraph(max_here: Int, min_here: Int) {
         Log.d("Dashboard", "$max_here $min_here YAxis constraints")
-        userGraphBinding.RatingGraph.xAxis.position = XAxis.XAxisPosition.BOTTOM
         userGraphBinding.RatingGraph.axisLeft.setAxisMaxValue(max_here.toFloat())
         userGraphBinding.RatingGraph.axisLeft.setAxisMinValue(min_here.toFloat())
-        userGraphBinding.RatingGraph.axisRight.setDrawLabels(false)
-        userGraphBinding.RatingGraph.description.isEnabled = false
-        userGraphBinding.RatingGraph.animateX(2000)
-        userGraphBinding.RatingGraph.axisRight.setDrawGridLines(false)
-        userGraphBinding.RatingGraph.setDrawBorders(true)
-        userGraphBinding.RatingGraph.xAxis.setDrawLabels(false)
-        userGraphBinding.RatingGraph.setBorderWidth(1.5f)
+
+        val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> R.color.white
+            else -> R.color.black
+        }
+
+        LineChartStyling(userGraphBinding.RatingGraph, applicationContext).styleIt(color)
         binding.UserGraph.visibility = VISIBLE
         userGraphBinding.RatingGraph.visibility = VISIBLE
-        userGraphBinding.RatingGraph.legend.isEnabled = false
-        val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                ContextCompat.getColor(applicationContext, R.color.white)
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                ContextCompat.getColor(applicationContext, R.color.black)
-            }
-            else -> {
-                ContextCompat.getColor(applicationContext, R.color.black)
-            }
-        }
-        userGraphBinding.RatingGraph.axisLeft.textColor = color
-        userGraphBinding.RatingGraph.setPinchZoom(false)
-        userGraphBinding.RatingGraph.elevation = 10f
-        userGraphBinding.RatingGraph.setScaleEnabled(false)
-        userGraphBinding.RatingGraph.isHighlightPerTapEnabled = false
-        userGraphBinding.RatingGraph.isHighlightPerDragEnabled = false
     }
 
     private fun getRatingColor(rating: Int): Int {
-        if (rating < 1200)
-            return R.color.Newbie
-        if (rating < 1400)
-            return R.color.Pupil
-        if (rating < 1600)
-            return R.color.Specialist
-        if (rating < 1900)
-            return R.color.Expert
-        if (rating < 2100)
-            return R.color.CandidateMaster
-        if (rating < 2300)
-            return R.color.Master
-        if (rating < 2400)
-            return R.color.InternationalMaster
-        if (rating < 2700)
-            return R.color.GrandMaster
-        if (rating < 3000)
-            return R.color.InternationalGrandmaster
+        if (rating < 1200) return R.color.Newbie
+        if (rating < 1400) return R.color.Pupil
+        if (rating < 1600) return R.color.Specialist
+        if (rating < 1900) return R.color.Expert
+        if (rating < 2100) return R.color.CandidateMaster
+        if (rating < 2300) return R.color.Master
+        if (rating < 2400) return R.color.InternationalMaster
+        if (rating < 2700) return R.color.GrandMaster
+        if (rating < 3000) return R.color.InternationalGrandmaster
         return R.color.LegendaryGrandmaster
     }
 
@@ -500,8 +474,8 @@ class Dashboard : Activity() {
                     val total = userSubmissions.result.size
                     for (submission in userSubmissions.result) {
                         if (submission.verdict == resources.getString(R.string.submission_accepted)) {
-                            var problem = submission.problem.contestId.toString() + submission.problem.index
-                            mapDifficulty.put(problem, submission.problem)
+                            val problem = submission.problem.contestId.toString() + submission.problem.index
+                            mapDifficulty[problem] = submission.problem
                             countAc++
                         }
                     }
@@ -539,60 +513,95 @@ class Dashboard : Activity() {
     }
 
     private fun updateProblemGraphs(difficulty: MutableMap<Int, Int>, index: MutableMap<String, Int>) {
-//        userSolvedRatingsBinding.ProblemRatingGraph.setDrawBarShadow(true)
-        userSolvedRatingsBinding.ProblemRatingGraph.setDrawGridBackground(true)
-        val barentries = ArrayList<BarEntry>()
-        var min_rating = 1000000
-        var max_rating = -1000000
+        val barEntries = ArrayList<BarEntry>()
+        var minRating = 1000000
+        var maxRating = -1000000
         for (element in difficulty) {
-            barentries.add(BarEntry(element.key.toFloat(), element.value.toFloat()))
-            min_rating = min(min_rating, element.key)
-            max_rating = max(max_rating, element.key)
+            barEntries.add(BarEntry(element.key.toFloat(), element.value.toFloat()))
+            minRating = min(minRating, element.key)
+            maxRating = max(maxRating, element.key)
         }
-        barentries.sortedBy { it.x }
-        val barDataSet = BarDataSet(barentries, "Difficulty")
-        barDataSet.setColor(resources.getColor(R.color.barGraphColor))
+
+        barEntries.sortedBy { it.x }
+        val barDataSet = BarDataSet(barEntries, "Difficulty")
+        barDataSet.color = resources.getColor(R.color.barGraphColor)
+        barDataSet.setDrawValues(true)
         val barData = BarData()
+
+        //formatter
+        class MyValueFormatter : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String? {
+                return Math.round(value).toString() + ""
+            }
+        }
+        barDataSet.valueFormatter = MyValueFormatter()
         barData.addDataSet(barDataSet)
-        barData.barWidth = 50f
-        userSolvedRatingsBinding.ProblemRatingGraph.data = barData
-
-
-        if (difficulty.size > 0) {
-            userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum = (min_rating - 100).toFloat()
-            userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum = (max_rating + 100).toFloat()
+        if (difficulty.isNotEmpty()) {
+            userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum = (minRating - 100).toFloat()
+            userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum = (maxRating + 100).toFloat()
+            val x = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum
+            val y = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum
+            barData.barWidth = 0.5f * (x - y) / index.size.toFloat()
         }
-        userSolvedRatingsBinding.ProblemRatingGraph.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        userSolvedRatingsBinding.ProblemRatingGraph.axisRight.setDrawLabels(false)
-        userSolvedRatingsBinding.ProblemRatingGraph.description.isEnabled = false
-        userSolvedRatingsBinding.ProblemRatingGraph.animateY(2000)
-        userSolvedRatingsBinding.ProblemRatingGraph.axisRight.setDrawGridLines(false)
-        userSolvedRatingsBinding.ProblemRatingGraph.setDrawBorders(true)
-        userSolvedRatingsBinding.ProblemRatingGraph.setBorderWidth(1.5f)
-        userSolvedRatingsBinding.ProblemRatingGraph.visibility = VISIBLE
-        userSolvedRatingsBinding.ProblemRatingGraph.legend.isEnabled = false
-        binding.UserRatingSolved.visibility = VISIBLE
-
+        Log.d("Dashboard", "BarDataDifficulty ${barData.barWidth}")
         val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> {
-                ContextCompat.getColor(applicationContext, R.color.white)
-            }
-            Configuration.UI_MODE_NIGHT_NO -> {
-                ContextCompat.getColor(applicationContext, R.color.black)
-            }
-            else -> {
-                ContextCompat.getColor(applicationContext, R.color.black)
-            }
+            Configuration.UI_MODE_NIGHT_YES -> R.color.white
+            else -> R.color.black
+        }
+        barData.setValueTextColor(ContextCompat.getColor(applicationContext, color))
+        barData.setValueTextSize(9f)
+
+        userSolvedRatingsBinding.ProblemRatingGraph.data = barData
+        BarChartStyling(userSolvedRatingsBinding.ProblemRatingGraph, applicationContext).styleIt(color)
+        userSolvedRatingsBinding.ProblemRatingGraph.invalidate()
+        userSolvedRatingsBinding.ProblemRatingGraph.visibility = VISIBLE
+        binding.UserRatingSolved.visibility = VISIBLE
+        updateProblemIndexGraph(index)
+    }
+    private fun updateProblemIndexGraph(index: MutableMap<String, Int>){
+        val barEntries = ArrayList<BarEntry>()
+        var minRating = 1000000
+        var maxRating = -1000000
+        for (element in index) {
+            val index1 = (element.key.toCharArray()[0] - 'A' + 1)
+            barEntries.add(BarEntry(index1.toFloat(), element.value.toFloat()))
+            minRating = min(minRating, index1)
+            maxRating = max(maxRating, index1)
         }
 
-        userSolvedRatingsBinding.ProblemRatingGraph.xAxis.labelCount = 5
-        userSolvedRatingsBinding.ProblemRatingGraph.axisLeft.labelCount = 4
-        userSolvedRatingsBinding.ProblemRatingGraph.axisLeft.textColor = color
-        userSolvedRatingsBinding.ProblemRatingGraph.setPinchZoom(false)
-        userSolvedRatingsBinding.ProblemRatingGraph.elevation = 10f
-        userSolvedRatingsBinding.ProblemRatingGraph.setScaleEnabled(false)
-        userSolvedRatingsBinding.ProblemRatingGraph.isHighlightPerTapEnabled = false
-        userSolvedRatingsBinding.ProblemRatingGraph.isHighlightPerDragEnabled = false
-        userSolvedRatingsBinding.ProblemRatingGraph.invalidate()
+        barEntries.sortedBy { it.x }
+        val barDataSet = BarDataSet(barEntries, "Index")
+        barDataSet.color = resources.getColor(R.color.barGraphColor)
+        barDataSet.setDrawValues(true)
+        val barData = BarData()
+
+        //formatter
+        class MyValueFormatter : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String? {
+                return Math.round(value).toString() + ""
+            }
+        }
+        barDataSet.valueFormatter = MyValueFormatter()
+        barData.addDataSet(barDataSet)
+
+        if (index.isNotEmpty()) {
+            userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum = (max(0, minRating - 1)).toFloat()
+            userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum = (min(26, maxRating + 1)).toFloat()
+            val x = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum
+            val y = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum
+            barData.barWidth = 0.55f * (x - y) / index.size.toFloat()
+        }
+        val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> R.color.white
+            else -> R.color.black
+        }
+        barData.setValueTextColor(ContextCompat.getColor(applicationContext, color))
+        barData.setValueTextSize(9f)
+        Log.d("Dashboard", "BarDataIndex ${barData.barWidth}")
+        userSolvedIndexBinding.ProblemIndexGraph.data = barData
+        BarChartStyling(userSolvedIndexBinding.ProblemIndexGraph, applicationContext).styleIt(color)
+        userSolvedIndexBinding.ProblemIndexGraph.invalidate()
+        userSolvedIndexBinding.ProblemIndexGraph.visibility = VISIBLE
+        binding.UserIndexSolved.visibility = VISIBLE
     }
 }

@@ -8,7 +8,15 @@
     android:paddingBottom="15dp"
     tools:context=".Dashboard">
 
-
+    <TextView
+        android:id="@+id/TitleText"
+        android:text="Rating Graph"
+        android:textColor="#3E5BC3"
+        style="@style/TitleCardTextBox"
+        android:drawableStart="@drawable/rating_graph_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/RatingGraph"
         android:layout_width="match_parent"
@@ -16,7 +24,8 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TitleText"
+        android:layout_marginTop="2dp"
         tools:visibility="visible" />
 
     <TextView

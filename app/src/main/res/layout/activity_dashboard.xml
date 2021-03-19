@@ -26,13 +26,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
-            app:strokeWidth="1dp"
+            app:strokeWidth="0.5dp"
             android:clickable="false"
             app:cardElevation="5dp"
             android:focusable="false"
             tools:visibility="visible"
             android:visibility="invisible"
-            app:cardCornerRadius="10dp">
+            app:cardCornerRadius="5dp">
 
             <include
                 android:id="@+id/public_data_id"
@@ -48,9 +48,9 @@
             android:focusable="false"
             android:visibility="invisible"
             tools:visibility="visible"
-            app:cardCornerRadius="10dp"
+            app:cardCornerRadius="5dp"
             app:cardElevation="5dp"
-            app:strokeWidth="1dp">
+            app:strokeWidth="0.5dp">
 
             <include
                 android:id="@+id/user_graph_id"
@@ -68,13 +68,32 @@
             android:focusable="false"
             android:visibility="invisible"
             tools:visibility="visible"
-            app:strokeWidth="1dp"
-            app:cardCornerRadius="10dp"
+            app:strokeWidth="0.5dp"
+            app:cardCornerRadius="5dp"
             app:cardElevation="5dp">
 
             <include
                 android:id="@+id/user_solved_rating_id"
                 layout="@layout/user_solved_ratings" />
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/UserIndexSolved"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            app:strokeWidth="0.5dp"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="5dp">
+
+            <include
+                android:id="@+id/user_solved_index_id"
+                layout="@layout/user_solved_index" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
