@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="QuestionTextBox">
         <item name="android:layout_width">@dimen/question_width</item>
         <item name="android:textSize">@dimen/text_normal_size</item>
@@ -8,8 +9,8 @@
         <item name="android:layout_marginTop">@dimen/normal_margin_top</item>
         <item name="android:drawablePadding">@dimen/padding_icon</item>
         <item name="android:visibility">invisible</item>
-
     </style>
+
     <style name="AnswerTextBox">
         <item name="android:layout_width">0dp</item>
         <item name="android:textSize">@dimen/text_normal_size</item>
@@ -34,8 +35,40 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">10dp</item>
-        <item name="android:textSize">15dp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="CardViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="strokeWidth">0.5dp</item>
+        <item name="android:clickable">false</item>
+        <item name="cardElevation">5dp</item>
+        <item name="android:focusable">false</item>
+        <item name="android:visibility">invisible</item>
+        <item name="cardCornerRadius">5dp</item>
+    </style>
+
+    <style name="UserInfoTitles">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_marginTop">@dimen/smaller_margin_top</item>
+        <item name="android:layout_marginLeft">@dimen/margin_left_questions</item>
+        <item name="android:layout_marginRight">@dimen/margin_left_questions</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">@dimen/text_bigger_size</item>
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
+    <style name="ChartStyling">
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">250dp</item>
+        <item name="android:visibility">invisible</item>
+
     </style>
 
 </resources>

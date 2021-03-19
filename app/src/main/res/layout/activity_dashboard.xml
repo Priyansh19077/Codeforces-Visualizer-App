@@ -7,8 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="10dp"
+    android:paddingBottom="30dp"
     android:scrollbars="none"
-    android:paddingBottom="10dp"
     tools:context=".Dashboard">
 
     <LinearLayout
@@ -23,16 +23,8 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/PublicData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            app:strokeWidth="0.5dp"
-            android:clickable="false"
-            app:cardElevation="5dp"
-            android:focusable="false"
-            tools:visibility="visible"
-            android:visibility="invisible"
-            app:cardCornerRadius="5dp">
+            style="@style/CardViewStyle"
+            tools:visibility="visible">
 
             <include
                 android:id="@+id/public_data_id"
@@ -41,16 +33,8 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/UserGraph"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:clickable="false"
-            android:focusable="false"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="5dp"
-            app:strokeWidth="0.5dp">
+            style="@style/CardViewStyle"
+            tools:visibility="visible">
 
             <include
                 android:id="@+id/user_graph_id"
@@ -58,19 +42,10 @@
         </com.google.android.material.card.MaterialCardView>
 
 
-
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/UserRatingSolved"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:clickable="false"
-            android:focusable="false"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            app:strokeWidth="0.5dp"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="5dp">
+            style="@style/CardViewStyle"
+            tools:visibility="visible">
 
             <include
                 android:id="@+id/user_solved_rating_id"
@@ -80,16 +55,8 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/UserIndexSolved"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:clickable="false"
-            android:focusable="false"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            app:strokeWidth="0.5dp"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="5dp">
+            style="@style/CardViewStyle"
+            tools:visibility="visible">
 
             <include
                 android:id="@+id/user_solved_index_id"

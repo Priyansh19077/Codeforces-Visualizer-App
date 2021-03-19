@@ -30,10 +30,10 @@ interface ProfileDataFetch {
 
     @GET("user.status")
     fun getSubmissions(
-            @Query("handle") handle : String,
-            @Query("lang") lang : String = "en",
-            @Query("from") from : Int = 1,
-            @Query("count") count : Int = 100000000) : retrofit2.Call<UserSubmissions>
+            @Query("handle") handle: String,
+            @Query("lang") lang: String = "en",
+            @Query("from") from: Int = 1,
+            @Query("count") count: Int = 100000000): retrofit2.Call<UserSubmissions>
 }
 
 

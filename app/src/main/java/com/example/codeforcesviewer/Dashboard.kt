@@ -36,6 +36,7 @@ import java.util.*
 import kotlin.collections.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 
 class Dashboard : Activity() {
@@ -60,7 +61,7 @@ class Dashboard : Activity() {
                 resources.getString(R.string.InternationalMaster) to R.color.InternationalMaster,
                 resources.getString(R.string.Grandmaster) to R.color.GrandMaster,
                 resources.getString(R.string.InternationalGrandmaster) to R.color.InternationalGrandmaster,
-                resources.getString(R.string.LegendaryGrandmaster) to R.color.LegendaryGrandmaster
+                resources.getString(R.string.LegendaryGrandmaster) to R.color.LegendaryGrandmaster,
         )
         publicDataBinding = binding.publicDataId
         userGraphBinding = binding.userGraphId
@@ -70,6 +71,7 @@ class Dashboard : Activity() {
         Log.d("Dashboard", "Handle Received: $handle")
         if (handle == null) {
             Log.d("Dashboard", "No Handle received here")
+            Toast.makeText(applicationContext, "No Handle received here !!!", Toast.LENGTH_LONG).show()
         } else {
             getData(handle)
             updateGraph(handle)
@@ -78,25 +80,25 @@ class Dashboard : Activity() {
     }
 
     private fun getData(handle: String) {
+        Log.d("Dashboard", "Getting User Info now")
         val publicData: Call<UserPublicData> = FetchData.instance.getUserData(handle)
         publicData.enqueue(object : Callback<UserPublicData> {
             override fun onResponse(call: Call<UserPublicData>, response: Response<UserPublicData>) {
-                Log.d("Dashboard", "Data Received: ${response.body()}")
-                Log.d("Dashboard", "${response.code()}")
+                Log.d("Dashboard", "User Info Response Code${response.code()}")
                 val userData = response.body()
                 if (userData != null) {
                     updateUI(userData)
                     showRanks()
                     getAllUsersData(handle, userData.result.get(0).country)
                 } else {
-                    Log.d("Dashboard", "Null received in User Data ${response.code()}")
-                    Toast.makeText(applicationContext, "Null received in User Data ${response.code()}", Toast.LENGTH_LONG).show()
+                    Log.d("Dashboard", "Null received in User Info : Response Code ${response.code()}")
+                    Toast.makeText(applicationContext, "Null received in User Info : Response Code ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<UserPublicData>, t: Throwable) {
                 Log.d("DashBoard", "Failure: ${t.localizedMessage}")
-                Toast.makeText(applicationContext, "Error in API User Data ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Error in API User Info : Message ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -109,7 +111,7 @@ class Dashboard : Activity() {
     }
 
     private fun updateUI(userPublicData: UserPublicData) {
-        val result = userPublicData.result.get(0)
+        val result = userPublicData.result[0]
         updateImage(result.titlePhoto)
         showQuestions()
         updateName(result.firstName, result.lastName)
@@ -121,7 +123,7 @@ class Dashboard : Activity() {
         updateFriends(result.friendOfCount)
         if (result.rank != null && result.maxRank != null)
             updateColor(result.rank, result.maxRank)
-        updateRegisteredOnline(result.registrationTimeSeconds, result.lastOnlineTimeSeconds)
+        updateRegisteredOnline(result.registrationTimeSeconds)
         checkOnline(result.lastOnlineTimeSeconds)
     }
 
@@ -135,7 +137,6 @@ class Dashboard : Activity() {
         publicDataBinding.ContributionQuestion.visibility = VISIBLE
         publicDataBinding.RegisteredQuestion.visibility = VISIBLE
         publicDataBinding.MaxRankQuestion.visibility = VISIBLE
-
     }
 
     private fun updateOrganization(organization: String?) {
@@ -168,10 +169,8 @@ class Dashboard : Activity() {
         if (contribution != null) {
             publicDataBinding.ContributionAnswer.text = "$contribution"
             if (contribution > 0) {
-                colors["pupil"]?.let {
-                    publicDataBinding.ContributionAnswer.setTextColor(resources.getColor(it))
-                    publicDataBinding.ContributionAnswer.text = "+$contribution"
-                }
+                publicDataBinding.ContributionAnswer.setTextColor(resources.getColor(R.color.positiveChange))
+                publicDataBinding.ContributionAnswer.text = "+$contribution"
             }
         } else {
             publicDataBinding.ContributionAnswer.text = "NA"
@@ -200,19 +199,18 @@ class Dashboard : Activity() {
         return months[number]
     }
 
-    private fun updateRegisteredOnline(time1: Long, time2: Long) {
+    private fun updateRegisteredOnline(time1: Long) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val timeNow: Long = Instant.now().toEpochMilli() / 1000
             val timePrev: Long = time1
             val seconds = timeNow - timePrev
             val days = seconds / 3600 / 24
             val date = getDaysAgo(days.toInt())
-            Log.d("Dashboard", "$timeNow $timePrev $seconds $days")
-            Log.d("Dashboard", "$date")
+            Log.d("Dashboard", "Date and Time or Registration: $timeNow $timePrev $seconds $days")
+            Log.d("Dashboard", "Date of Registration : $date")
             publicDataBinding.RegisteredAnswer.text = getMonth(date.month) + " " + date.date + ", " + (date.year + 1900)
-        } else {
+        } else
             publicDataBinding.RegisteredAnswer.text = "No Info!"
-        }
     }
 
     private fun checkOnline(time1: Long) {
@@ -220,12 +218,11 @@ class Dashboard : Activity() {
             val timeNow: Long = Instant.now().toEpochMilli() / 1000
             val timePrev: Long = time1
             val seconds = timeNow - timePrev
-            Log.d("Dashboard", "Seconds passed: $seconds")
-            if (seconds <= 5 * 3600) { // online in the previous
+            Log.d("Dashboard", "Seconds passed since last online: $seconds")
+            if (seconds <= 2 * 3600) // online in the previous 2 hours
                 publicDataBinding.onlineIndicator.visibility = VISIBLE
-            } else {
+            else
                 publicDataBinding.onlineIndicator.visibility = INVISIBLE
-            }
             return
         }
         publicDataBinding.onlineIndicator.visibility = INVISIBLE
@@ -237,7 +234,7 @@ class Dashboard : Activity() {
     }
 
     private fun updateColor(rank: String, max_rank: String) {
-        Log.d("Dashboard", rank)
+        Log.d("Dashboard", "Rank of User: $rank")
         colors[rank]?.let {
             publicDataBinding.titleTextView2.setTextColor(resources.getColor(it))
             publicDataBinding.profilePhotoImageView.borderColor = resources.getColor(it)
@@ -277,12 +274,12 @@ class Dashboard : Activity() {
         }
     }
 
-    private fun getAllUsersData(handle: String, country: String) {
+    private fun getAllUsersData(handle: String, country: String?) {
         val publicData: Call<UserPublicData> = FetchData.instance.getAllUsers()
         Log.d("Dashboard", "Getting All users now")
         publicData.enqueue(object : Callback<UserPublicData> {
             override fun onResponse(call: Call<UserPublicData>, response: Response<UserPublicData>) {
-                Log.d("Dashboard", "${response.code()}")
+                Log.d("Dashboard", "All Users : Response Code ${response.code()}")
                 val allUsers = response.body()
                 if (allUsers != null) {
                     var worldRank = 1
@@ -305,16 +302,15 @@ class Dashboard : Activity() {
                     }
                     updateRanks(worldRank, totalWorld, if (country != null) countryRank else -1, totalInCountry)
                 } else {
-                    Log.d("Dashboard", "Received null in Rank API ${response.code()}")
-                    Toast.makeText(applicationContext, "Null Received in Rank API: ${response.code()}", Toast.LENGTH_LONG).show()
+                    Log.d("Dashboard", "Received null in All users API : Response Code ${response.code()}")
+                    Toast.makeText(applicationContext, "Null Received in Fetching All Users : Response Code ${response.code()}", Toast.LENGTH_LONG).show()
                     updateRanks(-1, -1, -1, -1)
                 }
             }
 
             override fun onFailure(call: Call<UserPublicData>, t: Throwable) {
-                Log.d("DashBoard", "Failure: ${t.localizedMessage}")
-                Log.d("Dashboard", "Error in Rank API ${t.localizedMessage}")
-                Toast.makeText(applicationContext, "Error in API call Rank API: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+                Log.d("DashBoard", "Error in All Users API : Message ${t.localizedMessage}")
+                Toast.makeText(applicationContext, "Error in Fetching All Users : Message ${t.localizedMessage}", Toast.LENGTH_LONG).show()
                 updateRanks(-1, -1, -1, -1)
             }
         })
@@ -344,11 +340,10 @@ class Dashboard : Activity() {
         contestData.enqueue(object : Callback<UserContests> {
             override fun onResponse(call: Call<UserContests>, response: Response<UserContests>) {
                 Log.d("Dashboard", "Contest Data ${response.code()}")
-                val dataRetured = response.body()
-                if (dataRetured != null) {
-                    var max_here = -2000000
-                    var min_here = 2000000
-                    var max_limit: Long = 0
+                val dataReturned = response.body()
+                if (dataReturned != null) {
+                    var maxHere = -2000000
+                    var minHere = 2000000
                     var position = 0
                     val newContestTitle = ContestDataToShow("S.No",
                             "Contest Name",
@@ -359,54 +354,52 @@ class Dashboard : Activity() {
                             -1)
                     val contestToShow = mutableListOf<ContestDataToShow>()
                     contestToShow.add(newContestTitle)
-                    val min_time = if (dataRetured.result.isNotEmpty()) dataRetured.result[0].ratingUpdateTimeSeconds else 0
-                    for (contest in dataRetured.result) {
-                        Log.d("Dashboard", "Contest Next ${contest.toString()}")
-                        max_here = max(max_here, contest.newRating)
-                        min_here = min(min_here, contest.newRating)
-                        Log.d("Dashboard", "Adding point ${contest.newRating} ${(contest.ratingUpdateTimeSeconds - min_time).toFloat() / 1000}")
-                        ratings.add(Entry((contest.ratingUpdateTimeSeconds - min_time).toFloat() / 1000, contest.newRating.toFloat()))
-                        val item = contest
+                    val minTime = if (dataReturned.result.isNotEmpty()) dataReturned.result[0].ratingUpdateTimeSeconds else 0
+                    for (contest in dataReturned.result) {
+                        Log.d("Dashboard", "Contest Item ${contest.toString()}")
+                        maxHere = max(maxHere, contest.newRating)
+                        minHere = min(minHere, contest.newRating)
+                        Log.d("Dashboard", "Adding point on Rating Graph : ${contest.newRating} ${(contest.ratingUpdateTimeSeconds - minTime).toFloat() / 1000}")
+                        ratings.add(Entry((contest.ratingUpdateTimeSeconds - minTime).toFloat() / 1000, contest.newRating.toFloat()))
                         position++
                         val newContest = ContestDataToShow(
                                 (position).toString(),
-                                item.contestName ?: "Unknown Contest",
-                                if (item.rank != null) item.rank.toString() else "NA",
-                                (if (item.newRating - item.oldRating > 0) "+" else "") + (item.newRating - item.oldRating).toString(),
-                                item.newRating.toString(),
-                                if (item.newRating - item.oldRating > 0) R.color.positiveChange else R.color.negativeChange,
-                                getRatingColor(item.newRating))
+                                contest.contestName ?: "Unknown Contest",
+                                if (contest.rank != null) contest.rank.toString() else "NA",
+                                (if (contest.newRating - contest.oldRating > 0) "+" else "") + (contest.newRating - contest.oldRating).toString(),
+                                contest.newRating.toString(),
+                                if (contest.newRating - contest.oldRating > 0) R.color.positiveChange else R.color.negativeChange,
+                                getRatingColor(contest.newRating))
                         contestToShow.add(newContest)
                     }
                     var count = 0
                     for (entry in ratings) {
-                        if (entry.y != max_here.toFloat() || count == 1) {
+                        if (entry.y != maxHere.toFloat() || count == 1) {
                             circleColors.add(resources.getColor(R.color.ratingGraph))
                         } else {
                             circleColors.add(resources.getColor(R.color.maxRating))
                             count = 1
                         }
                     }
-                    max_here = if (max_here != -2000000) max_here + 200 else 2000
-                    min_here = if (min_here != 2000000) min(min_here - 200, 1200) else 1200
+                    maxHere = if (maxHere != -2000000) maxHere + 200 else 2000
+                    minHere = if (minHere != 2000000) min(minHere - 200, 1200) else 1200
                     val dataSets = ArrayList<ILineDataSet>()
                     ratings.sortBy { it.x }
                     val lineDataSet = LineDataSet(ratings, handle)
                     lineDataSet.lineWidth = 2F
-                    lineDataSet.setColor(resources.getColor(R.color.ratingGraph))
-                    lineDataSet.setCircleColors(circleColors)
+                    lineDataSet.color = resources.getColor(R.color.ratingGraph)
+                    lineDataSet.circleColors = circleColors
                     lineDataSet.circleHoleRadius = 1.6f
                     lineDataSet.circleHoleColor = resources.getColor(R.color.maxRating)
                     lineDataSet.setDrawValues(false)
                     dataSets.add(lineDataSet)
-                    StyleRatingGraph(max_here, min_here)
+                    styleRatingGraph(maxHere, minHere)
                     userGraphBinding.RatingGraph.data = LineData(dataSets)
                     userGraphBinding.RatingGraph.invalidate()
                     userGraphBinding.contestDropDown.setOnClickListener {
                         val builder = AlertDialog.Builder(this@Dashboard)
                         val titleView = layoutInflater.inflate(R.layout.contest_heading, null)
                         builder.setCustomTitle(titleView)
-                        val myDataset = dataRetured.result
                         val recyclerView = layoutInflater.inflate(R.layout.contest_recycler_view, null)
                         val recyclerViewView = recyclerView.findViewById<RecyclerView>(R.id.contest_recycler_view_view)
                         recyclerViewView.adapter = ContestAdapter(this@Dashboard, contestToShow)
@@ -417,22 +410,21 @@ class Dashboard : Activity() {
                         dialog.show()
                     }
                 } else {
-                    Log.d("Dashboard", "Contest Data Received null here!!!")
-                    Toast.makeText(applicationContext, "Null Received in API contests ${response.code()}", Toast.LENGTH_LONG).show()
+                    Log.d("Dashboard", "Null Received in Fetching Contests : Response Code ${response.code()}")
+                    Toast.makeText(applicationContext, "Null Received in Fetching Contests : Response Code ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<UserContests>, t: Throwable) {
-                Log.d("DashBoard", "Failure: ${t.localizedMessage}")
-                Log.d("Dashboard", "Error in API contests ${t.localizedMessage}")
-                Toast.makeText(applicationContext, "Error in API contests ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+                Log.d("DashBoard", "Error in Fetching Contests : Message ${t.localizedMessage}")
+                Toast.makeText(applicationContext, "Error in Fetching Contests : Message ${t.localizedMessage}", Toast.LENGTH_LONG).show()
             }
         })
 
     }
 
-    private fun StyleRatingGraph(max_here: Int, min_here: Int) {
-        Log.d("Dashboard", "$max_here $min_here YAxis constraints")
+    private fun styleRatingGraph(max_here: Int, min_here: Int) {
+        Log.d("Dashboard", "YAxis constraints : Max = $max_here,  Min = $min_here")
         userGraphBinding.RatingGraph.axisLeft.setAxisMaxValue(max_here.toFloat())
         userGraphBinding.RatingGraph.axisLeft.setAxisMinValue(min_here.toFloat())
 
@@ -471,7 +463,6 @@ class Dashboard : Activity() {
                     val mapDifficulty = mutableMapOf<String, Problem>()
                     val numberOfProblemsWithDifficulty = mutableMapOf<Int, Int>()
                     val numberOfProblemsWithIndex = mutableMapOf<String, Int>()
-                    val total = userSubmissions.result.size
                     for (submission in userSubmissions.result) {
                         if (submission.verdict == resources.getString(R.string.submission_accepted)) {
                             val problem = submission.problem.contestId.toString() + submission.problem.index
@@ -492,34 +483,36 @@ class Dashboard : Activity() {
                             numberOfProblemsWithIndex[problemIndex] = 1
                         }
                     }
-                    Log.d("Dashboard", "Total ACs $countAc")
-                    Log.d("Dashboard", "Total ACs here ${mapDifficulty.size}")
+                    Log.d("Dashboard", "Total ACs (includes repeated ACs) $countAc")
+                    Log.d("Dashboard", "Total ACs (unique) ${mapDifficulty.size}")
                     Log.d("Dashboard", "Total ACs with difficulty ${numberOfProblemsWithDifficulty.toString()}")
                     Log.d("Dashboard", "Total ACs with index ${numberOfProblemsWithIndex.toString()}")
-                    updateProblemGraphs(numberOfProblemsWithDifficulty, numberOfProblemsWithIndex)
+                    updateProblemDifficultyGraph(numberOfProblemsWithDifficulty)
+                    updateProblemIndexGraph(numberOfProblemsWithIndex)
                 } else {
-                    Log.d("Dashboard", "Received null in Submissions API ${response.code()}")
-                    Toast.makeText(applicationContext, "Null Received in Submissions API: ${response.code()}", Toast.LENGTH_LONG).show()
+                    Log.d("Dashboard", "Null Received in Fetching Submissions : Response Code ${response.code()}")
+                    Toast.makeText(applicationContext, "Null Received in Fetching Submissions : Response Code ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<UserSubmissions>, t: Throwable) {
-                Log.d("DashBoard", "Failure: ${t.localizedMessage}")
-                Log.d("Dashboard", "Error in Submissions API ${t.localizedMessage}")
-                Toast.makeText(applicationContext, "Error in API call Submissions API: ${t.localizedMessage}", Toast.LENGTH_LONG).show()
+                Log.d("DashBoard", "Error in Fetching Submissions: Message ${t.localizedMessage}")
+                Toast.makeText(applicationContext, "Error in Fetching Submissions: Message ${t.localizedMessage}", Toast.LENGTH_LONG).show()
                 updateRanks(-1, -1, -1, -1)
             }
         })
     }
 
-    private fun updateProblemGraphs(difficulty: MutableMap<Int, Int>, index: MutableMap<String, Int>) {
+    private fun updateProblemDifficultyGraph(difficulty: MutableMap<Int, Int>) {
         val barEntries = ArrayList<BarEntry>()
         var minRating = 1000000
         var maxRating = -1000000
+        var maxNumberOfProblems = 0
         for (element in difficulty) {
             barEntries.add(BarEntry(element.key.toFloat(), element.value.toFloat()))
             minRating = min(minRating, element.key)
             maxRating = max(maxRating, element.key)
+            maxNumberOfProblems = max(maxNumberOfProblems, element.value)
         }
 
         barEntries.sortedBy { it.x }
@@ -531,42 +524,60 @@ class Dashboard : Activity() {
         //formatter
         class MyValueFormatter : ValueFormatter() {
             override fun getFormattedValue(value: Float): String? {
-                return Math.round(value).toString() + ""
+                return value.roundToInt().toString() + ""
             }
         }
         barDataSet.valueFormatter = MyValueFormatter()
         barData.addDataSet(barDataSet)
+
+        Log.d("Dashboard", "BarDataDifficulty Width ${barData.barWidth}")
+        val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+            Configuration.UI_MODE_NIGHT_YES -> R.color.white
+            else -> R.color.black
+        }
+        BarChartStyling(userSolvedRatingsBinding.ProblemRatingGraph, applicationContext).styleIt(color)
+        userSolvedRatingsBinding.ProblemRatingGraph.axisLeft.labelCount = min(userSolvedRatingsBinding.ProblemRatingGraph.axisLeft.labelCount, maxNumberOfProblems)
+        barData.setValueTextColor(ContextCompat.getColor(applicationContext, color))
+        barData.setValueTextSize(9f)
         if (difficulty.isNotEmpty()) {
             userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum = (minRating - 100).toFloat()
             userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum = (maxRating + 100).toFloat()
             val x = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum
             val y = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum
-            barData.barWidth = 0.5f * (x - y) / index.size.toFloat()
+            barData.barWidth = 0.65f * (x - y) / difficulty.size.toFloat()
+            userSolvedRatingsBinding.ProblemRatingGraph.xAxis.labelCount = min(difficulty.size, userSolvedRatingsBinding.ProblemRatingGraph.xAxis.labelCount)
         }
-        Log.d("Dashboard", "BarDataDifficulty ${barData.barWidth}")
-        val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
-            Configuration.UI_MODE_NIGHT_YES -> R.color.white
-            else -> R.color.black
-        }
-        barData.setValueTextColor(ContextCompat.getColor(applicationContext, color))
-        barData.setValueTextSize(9f)
 
+        class LabelFormatter : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                val x = value
+                if (x == userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum || x == userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum)
+                    return ""
+                val y = value.toInt()
+                return y.toString()
+            }
+        }
+
+        val formatter = LabelFormatter()
+        userSolvedRatingsBinding.ProblemRatingGraph.xAxis.valueFormatter = formatter
         userSolvedRatingsBinding.ProblemRatingGraph.data = barData
-        BarChartStyling(userSolvedRatingsBinding.ProblemRatingGraph, applicationContext).styleIt(color)
         userSolvedRatingsBinding.ProblemRatingGraph.invalidate()
         userSolvedRatingsBinding.ProblemRatingGraph.visibility = VISIBLE
         binding.UserRatingSolved.visibility = VISIBLE
-        updateProblemIndexGraph(index)
+        userSolvedRatingsBinding.ProblemRatingGraph.xAxis.setDrawGridLines(false)
     }
-    private fun updateProblemIndexGraph(index: MutableMap<String, Int>){
+
+    private fun updateProblemIndexGraph(index: MutableMap<String, Int>) {
         val barEntries = ArrayList<BarEntry>()
         var minRating = 1000000
         var maxRating = -1000000
+        var maxNumberOfProblems = 0
         for (element in index) {
             val index1 = (element.key.toCharArray()[0] - 'A' + 1)
             barEntries.add(BarEntry(index1.toFloat(), element.value.toFloat()))
             minRating = min(minRating, index1)
             maxRating = max(maxRating, index1)
+            maxNumberOfProblems = max(maxNumberOfProblems, element.value)
         }
 
         barEntries.sortedBy { it.x }
@@ -577,29 +588,48 @@ class Dashboard : Activity() {
 
         //formatter
         class MyValueFormatter : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String? {
-                return Math.round(value).toString() + ""
+            override fun getFormattedValue(value: Float): String {
+                return value.roundToInt().toString() + ""
             }
         }
-        barDataSet.valueFormatter = MyValueFormatter()
-        barData.addDataSet(barDataSet)
 
-        if (index.isNotEmpty()) {
-            userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum = (max(0, minRating - 1)).toFloat()
-            userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum = (min(26, maxRating + 1)).toFloat()
-            val x = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum
-            val y = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum
-            barData.barWidth = 0.55f * (x - y) / index.size.toFloat()
-        }
         val color = when (applicationContext.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_YES -> R.color.white
             else -> R.color.black
         }
+        BarChartStyling(userSolvedIndexBinding.ProblemIndexGraph, applicationContext).styleIt(color)
+        barDataSet.valueFormatter = MyValueFormatter()
+        userSolvedIndexBinding.ProblemIndexGraph.axisLeft.labelCount = min(userSolvedIndexBinding.ProblemIndexGraph.axisLeft.labelCount, maxNumberOfProblems)
+        barData.addDataSet(barDataSet)
+        if (index.isNotEmpty()) {
+            userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum = (max(0, minRating - 1)).toFloat()
+            userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum = (min(27, maxRating + 1)).toFloat()
+            val x = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum
+            val y = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum
+            barData.barWidth = 0.65f * (x - y) / index.size.toFloat()
+            userSolvedIndexBinding.ProblemIndexGraph.xAxis.labelCount = min(index.size, userSolvedIndexBinding.ProblemIndexGraph.xAxis.labelCount)
+        }
         barData.setValueTextColor(ContextCompat.getColor(applicationContext, color))
         barData.setValueTextSize(9f)
-        Log.d("Dashboard", "BarDataIndex ${barData.barWidth}")
+        Log.d("Dashboard", "BarDataIndex Width ${barData.barWidth}")
         userSolvedIndexBinding.ProblemIndexGraph.data = barData
-        BarChartStyling(userSolvedIndexBinding.ProblemIndexGraph, applicationContext).styleIt(color)
+        userSolvedIndexBinding.ProblemIndexGraph.xAxis.labelCount = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum.toInt()
+
+
+        class LabelFormatter : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                val x = value.toInt()
+                if (value == userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum || value == userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum)
+                    return ""
+                val y = x - 1
+                val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                return chars[y].toString()
+            }
+        }
+
+        val formatter = LabelFormatter()
+        userSolvedIndexBinding.ProblemIndexGraph.xAxis.setDrawGridLines(false)
+        userSolvedIndexBinding.ProblemIndexGraph.xAxis.valueFormatter = formatter
         userSolvedIndexBinding.ProblemIndexGraph.invalidate()
         userSolvedIndexBinding.ProblemIndexGraph.visibility = VISIBLE
         binding.UserIndexSolved.visibility = VISIBLE

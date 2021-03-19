@@ -8,18 +8,15 @@
 
     <TextView
         android:id="@+id/TitleText"
-        android:text="Problems Solved by Index"
         style="@style/TitleCardTextBox"
         android:drawableStart="@drawable/difficulty_wise_solved_icon"
+        android:text="@string/problems_solved_by_index"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/ProblemIndexGraph"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:visibility="invisible"
-        android:layout_marginTop="2dp"
+        style="@style/ChartStyling"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
