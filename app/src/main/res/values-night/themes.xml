@@ -14,6 +14,7 @@
         <!-- Customize your theme here. -->
         <item name="android:textColor">@color/white</item>
         <item name="strokeColor">@color/grey</item>
+        <item name="bgColor">@color/blackBackground</item>
     </style>
 
 </resources>

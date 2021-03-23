@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -88,8 +89,8 @@ class Dashboard : Activity() {
                 val userData = response.body()
                 if (userData != null) {
                     updateUI(userData)
-                    showRanks()
-                    getAllUsersData(handle, userData.result.get(0).country)
+//                    showRanks()
+//                    getAllUsersData(handle, userData.result.get(0).country)
                 } else {
                     Log.d("Dashboard", "Null received in User Info : Response Code ${response.code()}")
                     Toast.makeText(applicationContext, "Null received in User Info : Response Code ${response.code()}", Toast.LENGTH_LONG).show()
@@ -407,6 +408,10 @@ class Dashboard : Activity() {
                         builder.setCancelable(true)
                         builder.setView(recyclerView)
                         val dialog = builder.create()
+                        val closeButton = titleView.findViewById<Button>(R.id.closeRecyclerView)
+                        closeButton?.setOnClickListener {
+                            dialog.dismiss()
+                        }
                         dialog.show()
                     }
                 } else {

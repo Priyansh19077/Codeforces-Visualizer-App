@@ -35,4 +35,7 @@
     <color name="grey">#9F9494</color>
     <color name="darkGrey">#3C3333</color>
 
+<!--    background color for themes-->
+    <color name="greyBackground">#CAB6B6</color>
+    <color name="blackBackground">#000000</color>
 </resources>

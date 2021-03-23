@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/contest_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="335dp"
+        android:layout_height="56dp"
         android:drawableStart="@drawable/contest_list_icon"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
@@ -16,7 +17,18 @@
         android:text="@string/rated_contests"
         android:textSize="@dimen/text_bigger_size"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:id="@+id/closeRecyclerView"
+        android:background="@drawable/close_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/contest_heading"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
