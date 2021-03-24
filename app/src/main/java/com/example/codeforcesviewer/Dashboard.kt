@@ -549,7 +549,8 @@ class Dashboard : Activity() {
             userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum = (maxRating + 100).toFloat()
             val x = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum
             val y = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum
-            barData.barWidth = 0.65f * (x - y) / difficulty.size.toFloat()
+
+            barData.barWidth = 0.75f * 100
             userSolvedRatingsBinding.ProblemRatingGraph.xAxis.labelCount = min(difficulty.size, userSolvedRatingsBinding.ProblemRatingGraph.xAxis.labelCount)
         }
 
@@ -611,7 +612,8 @@ class Dashboard : Activity() {
             userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum = (min(27, maxRating + 1)).toFloat()
             val x = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum
             val y = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum
-            barData.barWidth = 0.65f * (x - y) / index.size.toFloat()
+            barData.barWidth = 0.75f * 1
+            Log.d("Dashboard", "${index.size.toFloat()}")
             userSolvedIndexBinding.ProblemIndexGraph.xAxis.labelCount = min(index.size, userSolvedIndexBinding.ProblemIndexGraph.xAxis.labelCount)
         }
         barData.setValueTextColor(ContextCompat.getColor(applicationContext, color))
@@ -619,7 +621,6 @@ class Dashboard : Activity() {
         Log.d("Dashboard", "BarDataIndex Width ${barData.barWidth}")
         userSolvedIndexBinding.ProblemIndexGraph.data = barData
         userSolvedIndexBinding.ProblemIndexGraph.xAxis.labelCount = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum.toInt()
-
 
         class LabelFormatter : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {

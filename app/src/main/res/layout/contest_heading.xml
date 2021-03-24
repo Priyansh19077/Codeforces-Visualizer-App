@@ -8,7 +8,7 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/contest_heading"
-        android:layout_width="335dp"
+        android:layout_width="0dp"
         android:layout_height="56dp"
         android:drawableStart="@drawable/contest_list_icon"
         android:drawablePadding="10dp"
@@ -28,7 +28,7 @@
         android:background="@drawable/close_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/contest_heading"
+        android:layout_marginRight="10dp"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
