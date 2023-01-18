@@ -1,6 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.codeforcesviewer
 
 import android.app.Activity
+import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -53,16 +56,16 @@ class Dashboard : Activity() {
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
         colors = mapOf(
-                resources.getString(R.string.Newbie) to R.color.Newbie,
-                resources.getString(R.string.Pupil) to R.color.Pupil,
-                resources.getString(R.string.Specialist) to R.color.Specialist,
-                resources.getString(R.string.Expert) to R.color.Expert,
-                resources.getString(R.string.CandidateMaster) to R.color.CandidateMaster,
-                resources.getString(R.string.Master) to R.color.Master,
-                resources.getString(R.string.InternationalMaster) to R.color.InternationalMaster,
-                resources.getString(R.string.Grandmaster) to R.color.GrandMaster,
-                resources.getString(R.string.InternationalGrandmaster) to R.color.InternationalGrandmaster,
-                resources.getString(R.string.LegendaryGrandmaster) to R.color.LegendaryGrandmaster,
+            resources.getString(R.string.Newbie) to R.color.Newbie,
+            resources.getString(R.string.Pupil) to R.color.Pupil,
+            resources.getString(R.string.Specialist) to R.color.Specialist,
+            resources.getString(R.string.Expert) to R.color.Expert,
+            resources.getString(R.string.CandidateMaster) to R.color.CandidateMaster,
+            resources.getString(R.string.Master) to R.color.Master,
+            resources.getString(R.string.InternationalMaster) to R.color.InternationalMaster,
+            resources.getString(R.string.Grandmaster) to R.color.GrandMaster,
+            resources.getString(R.string.InternationalGrandmaster) to R.color.InternationalGrandmaster,
+            resources.getString(R.string.LegendaryGrandmaster) to R.color.LegendaryGrandmaster,
         )
         publicDataBinding = binding.publicDataId
         userGraphBinding = binding.userGraphId
@@ -71,8 +74,8 @@ class Dashboard : Activity() {
         val handle: String? = intent.getStringExtra("handle")
         Log.d("Dashboard", "Handle Received: $handle")
         if (handle == null) {
-            Log.d("Dashboard", "No Handle received here")
-            Toast.makeText(applicationContext, "No Handle received here !!!", Toast.LENGTH_LONG).show()
+            Log.d("Dashboard", "No Handle received")
+            Toast.makeText(applicationContext, "No Handle received!!!", Toast.LENGTH_LONG).show()
         } else {
             getData(handle)
             updateGraph(handle)
@@ -89,8 +92,12 @@ class Dashboard : Activity() {
                 val userData = response.body()
                 if (userData != null) {
                     updateUI(userData)
-//                    showRanks()
-//                    getAllUsersData(handle, userData.result.get(0).country)
+                    val sharedPreference =  getSharedPreferences("com.example.codeforcesviewer", Context.MODE_PRIVATE)
+                    var editor = sharedPreference.edit()
+                    editor.putString("username", handle)
+                    editor.commit()
+                    showRanks()
+                    getAllUsersData(handle, userData.result.get(0).country)
                 } else {
                     Log.d("Dashboard", "Null received in User Info : Response Code ${response.code()}")
                     Toast.makeText(applicationContext, "Null received in User Info : Response Code ${response.code()}", Toast.LENGTH_LONG).show()
@@ -194,8 +201,8 @@ class Dashboard : Activity() {
 
     private fun getMonth(number: Int): String? {
         val months = mapOf<Int, String>(
-                0 to "January", 1 to "February", 2 to "March", 3 to "April", 4 to "May", 5 to "June",
-                6 to "July", 7 to "August", 8 to "September", 9 to "October", 10 to "November", 11 to "December",
+            0 to "January", 1 to "February", 2 to "March", 3 to "April", 4 to "May", 5 to "June",
+            6 to "July", 7 to "August", 8 to "September", 9 to "October", 10 to "November", 11 to "December",
         )
         return months[number]
     }
@@ -256,12 +263,15 @@ class Dashboard : Activity() {
     }
 
     class DownloadImageTask(private val bmImage: ImageView) :
-            AsyncTask<String?, Void?, Bitmap?>() {
+        AsyncTask<String?, Void?, Bitmap?>() {
         override fun doInBackground(vararg params: String?): Bitmap? {
             val urldisplay = params[0]
+            Log.i("URLForImage", urldisplay.toString())
             var mIcon11: Bitmap? = null
             try {
+                Log.i("FinalURL", URL(urldisplay).toString())
                 val `in`: InputStream = URL(urldisplay).openStream()
+                Log.i("ReachedHere", "CreatedInputStream")
                 mIcon11 = BitmapFactory.decodeStream(`in`)
             } catch (e: Exception) {
                 Log.e("Dashboard", "Error in Image Download + ${e.message!!}")
@@ -271,6 +281,10 @@ class Dashboard : Activity() {
         }
 
         override fun onPostExecute(result: Bitmap?) {
+            if(result == null) {
+                bmImage.setImageResource(R.drawable.unfounduser)
+                return
+            }
             bmImage.setImageBitmap(result)
         }
     }
@@ -278,6 +292,7 @@ class Dashboard : Activity() {
     private fun getAllUsersData(handle: String, country: String?) {
         val publicData: Call<UserPublicData> = FetchData.instance.getAllUsers()
         Log.d("Dashboard", "Getting All users now")
+        Log.d("Handle of User", handle)
         publicData.enqueue(object : Callback<UserPublicData> {
             override fun onResponse(call: Call<UserPublicData>, response: Response<UserPublicData>) {
                 Log.d("Dashboard", "All Users : Response Code ${response.code()}")
@@ -288,8 +303,10 @@ class Dashboard : Activity() {
                     val totalWorld = allUsers.result.size
                     var totalInCountry = 1
                     for (result in allUsers.result) {
-                        if (result.handle == handle)
+                        if (result.handle == handle) {
+                            Log.i("All Users", "Handle Matched")
                             break
+                        }
                         if (result.country == country)
                             countryRank++
                         worldRank++
@@ -347,12 +364,12 @@ class Dashboard : Activity() {
                     var minHere = 2000000
                     var position = 0
                     val newContestTitle = ContestDataToShow("S.No",
-                            "Contest Name",
-                            "Rank",
-                            "Rating Change",
-                            "New Rating",
-                            -1,
-                            -1)
+                        "Contest Name",
+                        "Rank",
+                        "Rating Change",
+                        "New Rating",
+                        -1,
+                        -1)
                     val contestToShow = mutableListOf<ContestDataToShow>()
                     contestToShow.add(newContestTitle)
                     val minTime = if (dataReturned.result.isNotEmpty()) dataReturned.result[0].ratingUpdateTimeSeconds else 0
@@ -364,13 +381,13 @@ class Dashboard : Activity() {
                         ratings.add(Entry((contest.ratingUpdateTimeSeconds - minTime).toFloat() / 1000, contest.newRating.toFloat()))
                         position++
                         val newContest = ContestDataToShow(
-                                (position).toString(),
-                                contest.contestName ?: "Unknown Contest",
-                                if (contest.rank != null) contest.rank.toString() else "NA",
-                                (if (contest.newRating - contest.oldRating > 0) "+" else "") + (contest.newRating - contest.oldRating).toString(),
-                                contest.newRating.toString(),
-                                if (contest.newRating - contest.oldRating > 0) R.color.positiveChange else R.color.negativeChange,
-                                getRatingColor(contest.newRating))
+                            (position).toString(),
+                            contest.contestName ?: "Unknown Contest",
+                            if (contest.rank != null) contest.rank.toString() else "NA",
+                            (if (contest.newRating - contest.oldRating > 0) "+" else "") + (contest.newRating - contest.oldRating).toString(),
+                            contest.newRating.toString(),
+                            if (contest.newRating - contest.oldRating > 0) R.color.positiveChange else R.color.negativeChange,
+                            getRatingColor(contest.newRating))
                         contestToShow.add(newContest)
                     }
                     var count = 0
@@ -478,12 +495,12 @@ class Dashboard : Activity() {
                     for (problem in mapDifficulty) {
                         if (problem.value.rating != null) {
                             numberOfProblemsWithDifficulty[problem.value.rating!!] = 1 + (numberOfProblemsWithDifficulty[problem.value.rating!!]
-                                    ?: 0)
+                                ?: 0)
                         }
                         val problemIndex = problem.value.index[0].toString()
                         if (numberOfProblemsWithIndex.containsKey(problemIndex)) {
                             numberOfProblemsWithIndex[problemIndex] = 1 + (numberOfProblemsWithIndex[problemIndex]
-                                    ?: 0)
+                                ?: 0)
                         } else {
                             numberOfProblemsWithIndex[problemIndex] = 1
                         }
@@ -547,8 +564,8 @@ class Dashboard : Activity() {
         if (difficulty.isNotEmpty()) {
             userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum = (minRating - 100).toFloat()
             userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum = (maxRating + 100).toFloat()
-            val x = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum
-            val y = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum
+//            val x = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMaximum
+//            val y = userSolvedRatingsBinding.ProblemRatingGraph.xAxis.axisMinimum
 
             barData.barWidth = 0.75f * 100
             userSolvedRatingsBinding.ProblemRatingGraph.xAxis.labelCount = min(difficulty.size, userSolvedRatingsBinding.ProblemRatingGraph.xAxis.labelCount)
@@ -610,8 +627,8 @@ class Dashboard : Activity() {
         if (index.isNotEmpty()) {
             userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum = (max(0, minRating - 1)).toFloat()
             userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum = (min(27, maxRating + 1)).toFloat()
-            val x = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum
-            val y = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum
+//            val x = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMaximum
+//            val y = userSolvedIndexBinding.ProblemIndexGraph.xAxis.axisMinimum
             barData.barWidth = 0.75f * 1
             Log.d("Dashboard", "${index.size.toFloat()}")
             userSolvedIndexBinding.ProblemIndexGraph.xAxis.labelCount = min(index.size, userSolvedIndexBinding.ProblemIndexGraph.xAxis.labelCount)
